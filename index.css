@@ -1,0 +1,684 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --warning: 255 193 7; /* Bootstrap warning */
+    --bg-primary: 255 255 255; /* 白色背景 */
+    --bg-secondary: 248 249 250; /* Bootstrap 的次背景色 */
+    --text-primary: 33 37 41; /* 深灰色文字 */
+    --text-secondary: 108 117 125; /* 中灰色文字 */
+    --accent: 0 123 255; /* Bootstrap 的藍色主題色 */
+    --error: 220 53 69; /* Bootstrap 的紅色錯誤色 */
+    --success: 40 167 69; /* Bootstrap 的綠色成功色 */
+    --border: 222 226 230; /* 淡灰色邊框 */
+  }
+
+  .dark {
+    --warning: 255 193 7;
+    --bg-primary: 18 20 26; /* 深色背景 */
+    --bg-secondary: 32 37 47; /* 深灰色背景 */
+    --text-primary: 235 238 245; /* 白色文字 */
+    --text-secondary: 159 167 181; /* 淡灰色文字 */
+    --accent: 87 147 255; /* 冷色調主題色 */
+    --error: 238 108 123; /* 紅色錯誤色 */
+    --success: 76 201 140; /* 綠色成功色 */
+    --border: 56 63 76; /* 深灰色邊框 */
+  }
+}
+
+/* Alert / notice styles (themed) */
+
+
+/* Unified primary/secondary alert styles for consistent look */
+.alert-primary {
+  background-color: rgba(var(--accent), 0.08);
+  border-color: rgba(var(--accent), 0.18);
+  color: rgb(var(--text-primary));
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.alert-secondary {
+  background-color: rgba(0,0,0,0.02);
+  border-color: rgba(var(--border), 0.12);
+  color: rgb(var(--text-secondary));
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.alert-danger {
+  background-color: rgba(var(--error), 0.14);
+  border-color: rgba(var(--error), 0.5);
+  color: rgb(var(--text-primary));
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.alert-critical {
+  background-color: rgba(var(--error), 0.12);
+  border: 1px solid rgba(var(--error), 0.55);
+  color: rgb(var(--error));
+  border-radius: 0.6rem;
+  padding: 0.85rem 1.1rem;
+  box-shadow: 0 10px 24px rgba(var(--error), 0.18);
+}
+/* end alerts */
+
+.themed-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.themed-btn-primary {
+  background-color: rgb(var(--accent));
+  color: #fff;
+}
+.themed-btn-primary:hover { opacity: 0.95; }
+.themed-btn-secondary {
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--text-primary));
+  border: 1px solid rgb(var(--border));
+}
+.themed-btn-secondary:hover { background-color: rgb(var(--bg-primary)); color: rgb(var(--accent)); }
+.themed-btn-warning {
+  background-color: rgb(255 193 7);
+  color: #111;
+}
+.themed-btn-danger {
+  background-color: rgb(var(--error));
+  color: #fff;
+}
+
+.themed-card {
+  background-color: rgb(var(--bg-secondary));
+  border: 1px solid rgb(var(--border));
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.text-muted { color: rgba(var(--text-primary), 0.75); }
+.text-primary { color: rgb(var(--text-primary)); }
+.bg-muted { background-color: rgb(var(--bg-secondary)); }
+
+/* select styling for language chooser */
+.themed-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+  min-width: 110px;
+}
+.themed-select:focus {
+  outline: none;
+  border-color: rgb(var(--accent));
+  box-shadow: 0 0 0 4px rgba(var(--accent), 0.08);
+}
+
+/* Quick helper bg classes used in AccountItem etc */
+.bg-accent { background-color: rgb(var(--accent)); color: #fff; }
+.bg-error { background-color: rgb(var(--error)); color: #fff; }
+.bg-success { background-color: rgb(var(--success)); color: #fff; }
+.bg-secondary-bg { background-color: rgb(var(--bg-secondary)); color: rgb(var(--text-primary)); }
+
+.app-shell {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+}
+
+.icon-button {
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--text-primary));
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.icon-button:hover {
+  opacity: 0.85;
+}
+
+.icon-button:active {
+  transform: scale(0.97);
+}
+
+.icon-button-accent {
+  background-color: rgb(var(--accent));
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(var(--accent), 0.35);
+  border: none;
+}
+
+.icon-button-accent:hover {
+  opacity: 1;
+  filter: brightness(1.05);
+}
+
+.icon-button-accent:active {
+  transform: scale(0.95);
+}
+
+.theme-switcher-button {
+  background-color: rgb(var(--bg-secondary));
+  border: 1px solid rgb(var(--border));
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.18s ease;
+}
+
+.theme-switcher-button:hover {
+  border-color: rgb(var(--accent));
+}
+
+.theme-switcher-button:active {
+  transform: scale(0.97);
+}
+
+.theme-switcher-icon {
+  color: rgb(var(--text-secondary));
+}
+
+.button-neutral-secondary {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-secondary));
+  border: 1px solid rgba(var(--border), 0.7);
+}
+
+.button-neutral-secondary:hover {
+  color: rgb(var(--accent));
+  border-color: rgb(var(--accent));
+}
+body {
+  margin: 0;
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.input {
+  background-color: rgb(var(--bg-primary));
+  border: 1px solid rgb(var(--border));
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: rgb(var(--text-primary));
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgb(var(--accent));
+  background-color: rgb(var(--bg-secondary));
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+  color: white;
+  background-color: rgb(var(--accent));
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--text-primary));
+}
+
+.btn-secondary:hover {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--accent));
+}
+
+.btn-danger {
+  color: white;
+  background-color: rgb(var(--error));
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+.account-item {
+  position: relative;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out, transform 0.12s ease, margin 0.12s ease;
+  background-color: rgb(var(--bg-secondary));
+}
+
+.account-item:hover {
+  opacity: 0.9;
+}
+
+/* Jiggle animation used in reorder mode */
+@keyframes jiggle {
+  0% { transform: translateY(0) rotate(-0.8deg); }
+  25% { transform: translateY(2px) rotate(0.8deg); }
+  50% { transform: translateY(0) rotate(-0.8deg); }
+  75% { transform: translateY(-2px) rotate(0.8deg); }
+  100% { transform: translateY(0) rotate(-0.8deg); }
+}
+
+.jiggle {
+  animation: jiggle 0.5s infinite ease-in-out;
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+.reorder-handle {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.06);
+}
+
+.bg-surface-secondary {
+  background-color: rgb(var(--bg-secondary));
+}
+
+.text-primary-color {
+  color: rgb(var(--text-primary));
+}
+
+.text-secondary-color {
+  color: rgb(var(--text-secondary));
+}
+
+.text-accent-color {
+  color: rgb(var(--accent));
+}
+
+.text-error-color {
+  color: rgb(var(--error));
+}
+
+.button-accent {
+  background-color: rgb(var(--accent));
+  color: #fff;
+}
+
+.button-error {
+  background-color: rgb(var(--error));
+  color: #fff;
+}
+
+.button-success {
+  background-color: rgb(var(--success));
+  color: #fff;
+}
+
+.button-neutral {
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--text-primary));
+}
+
+.badge-success {
+  background-color: rgb(var(--success));
+  color: #fff;
+}
+
+.account-card-content {
+  position: relative;
+}
+
+.empty-state-card {
+  background-color: rgb(var(--bg-secondary));
+}
+
+.otp-progress-circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.otp-progress-circle.no-transition {
+  transition: none;
+}
+
+.otp-timer {
+  position: absolute;
+  bottom: 0.45rem;
+  right: 0.85rem;
+  width: 2.7rem;
+  height: 2.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  border-radius: 9999px;
+  background-color: rgba(var(--bg-primary), 0.65);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  pointer-events: none;
+}
+
+.otp-timer-ring {
+  width: 100%;
+  height: 100%;
+}
+
+.otp-progress-bg {
+  stroke: rgba(var(--border), 0.4);
+}
+
+.otp-progress-ring {
+  stroke: currentColor;
+}
+
+.otp-timer-value {
+  position: absolute;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgb(var(--text-primary));
+}
+
+.otp-timer-normal {
+  color: rgb(var(--accent));
+}
+
+.otp-timer-warning {
+  color: rgb(var(--warning));
+}
+
+.otp-timer-critical {
+  color: rgb(var(--error));
+  animation: otp-flash 0.8s ease-in-out infinite;
+}
+
+.token-copy-badge {
+  margin-left: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+
+
+.reorder-delete-zone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.9rem;
+  border-width: 2px;
+  border-style: dashed;
+  border-color: rgba(var(--error), 0.7);
+  background-color: rgba(var(--error), 0.12);
+  color: rgb(var(--error));
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  pointer-events: auto;
+  box-shadow: 0 6px 18px rgba(var(--error), 0.12);
+}
+
+.reorder-delete-zone.enabled {
+  border-color: rgba(var(--error), 0.9);
+  background-color: rgba(var(--error), 0.18);
+  box-shadow: 0 0 0 3px rgba(var(--error), 0.12);
+}
+
+.reorder-delete-zone.active {
+  background-color: rgb(var(--error));
+  border-color: rgb(var(--error));
+  color: #fff;
+  transform: scale(0.995);
+  box-shadow: 0 10px 22px rgba(var(--error), 0.28);
+}
+
+.reorder-delete-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background-color: rgba(var(--error), 0.15);
+  color: rgb(var(--error));
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.reorder-delete-zone.active .reorder-delete-icon {
+  background-color: rgb(var(--error));
+  color: #fff;
+}
+
+.reorder-delete-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 0;
+}
+
+.reorder-delete-subtitle {
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.swipe-actions {
+  width: 144px;
+  justify-content: flex-end;
+  padding-left: 0.25rem;
+  background-color: rgb(var(--bg-secondary));
+  pointer-events: none;
+  transform: translateX(144px);
+  transition: transform 0.2s ease-out;
+}
+
+.swipe-actions button {
+  pointer-events: auto;
+}
+
+.token-copy {
+  gap: 0.75rem;
+}
+
+@keyframes otp-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* placeholder shown when dragging over a position */
+.drop-placeholder {
+  position: relative;
+  height: 80px;
+  margin-bottom: 0.75rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Strong visibility - use explicit color values for reliability */
+  background: linear-gradient(135deg, rgba(128, 128, 128, 0.12), rgba(128, 128, 128, 0.06));
+  
+  /* STRONG dashed border - gray (#808080) */
+  border: 2px dashed #808080;
+  box-shadow: 
+    inset 0 0 12px rgba(128, 128, 128, 0.2),
+    0 0 18px rgba(128, 128, 128, 0.15);
+  
+  overflow: hidden;
+  z-index: 10;
+  cursor: grab;
+}
+
+/* Enhance on hover */
+.drop-placeholder:hover {
+  border-color: #666666;
+  background: linear-gradient(135deg, rgba(128, 128, 128, 0.15), rgba(128, 128, 128, 0.09));
+  box-shadow: 
+    inset 0 0 15px rgba(128, 128, 128, 0.25),
+    0 0 22px rgba(128, 128, 128, 0.2);
+}
+
+.sortable-virtual-zone {
+  height: 0;
+  margin-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: height 0.15s ease, margin-bottom 0.15s ease;
+}
+
+[data-sortable-active="true"] .sortable-virtual-zone {
+  height: 72px;
+  margin-bottom: 0.75rem;
+}
+
+/* Inner animated border for visual interest */
+.drop-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  border: 1px dashed rgba(128, 128, 128, 0.5);
+  border-radius: 0.5rem;
+  pointer-events: none;
+  animation: innerBorderPulse 1.5s infinite ease-in-out;
+}
+
+/* Pulsing shimmer effect */
+.drop-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(128, 128, 128, 0.1) 50%, 
+    transparent 100%);
+  animation: dropZonShimmer 2.5s infinite ease-in-out;
+  pointer-events: none;
+  border-radius: 0.65rem;
+}
+
+@keyframes placeholderPulse {
+  0%, 100% { 
+    opacity: 1;
+    border-color: #4CAF50;
+    box-shadow: 
+      inset 0 0 10px rgba(76, 175, 80, 0.25),
+      0 0 15px rgba(76, 175, 80, 0.2);
+  }
+  50% { 
+    opacity: 1;
+    border-color: #45a049;
+    box-shadow: 
+      inset 0 0 14px rgba(76, 175, 80, 0.35),
+      0 0 20px rgba(76, 175, 80, 0.28);
+  }
+}
+
+@keyframes innerBorderPulse {
+  0%, 100% { 
+    opacity: 0.7;
+    border-color: rgba(76, 175, 80, 0.5);
+  }
+  50% { 
+    opacity: 0.9;
+    border-color: rgba(76, 175, 80, 0.75);
+  }
+}
+
+@keyframes dropZonShimmer {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.5; }
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background-color: rgb(0 0 0 / 0.5);
+}
+
+.modal-content {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 1rem;
+  background-color: rgb(var(--bg-primary));
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: rgb(var(--text-secondary));
+}
+
+.form-input {
+  width: 100%;
+}
+
+/* 調整語言切換按鈕的樣式，區分深色和淺色主題 */
+.language-switcher {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.language-switcher-light {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+  border: 1px solid rgb(var(--border));
+}
+
+.language-switcher-light:hover {
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--accent));
+}
+
+.language-switcher-dark {
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--text-primary));
+}
+
+.language-switcher-dark:hover {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--accent));
+}

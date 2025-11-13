@@ -1,0 +1,7 @@
+{
+  "name": "Secure Authenticator",
+  "description": "A secure, client-side authenticator app similar to Google Authenticator. It supports TOTP, field renaming, sorting, and encrypted data import/export. All data is stored and encrypted locally in your browser.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

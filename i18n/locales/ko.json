@@ -113,5 +113,13 @@
     "switch_to_light": "라이트 모드로 전환",
     "switch_to_dark": "다크 모드로 전환",
     "switch_to_system": "시스템 모드로 전환"
+  },
+  "groups": {
+    "all": "전체",
+    "add_tab": "그룹 추가",
+    "add_modal_title": "그룹 만들기",
+    "add_modal_label": "그룹 이름",
+    "name_required": "그룹 이름을 입력하세요.",
+    "name_duplicate": "이미 존재하는 그룹입니다."
   }
 }

@@ -113,5 +113,13 @@
     "switch_to_light": "Zum hellen Modus wechseln",
     "switch_to_dark": "Zum dunklen Modus wechseln",
     "switch_to_system": "Zum Systemmodus wechseln"
+  },
+  "groups": {
+    "all": "Alle",
+    "add_tab": "Gruppe hinzufügen",
+    "add_modal_title": "Gruppe erstellen",
+    "add_modal_label": "Gruppenname",
+    "name_required": "Bitte einen Gruppennamen eingeben.",
+    "name_duplicate": "Diese Gruppe existiert bereits."
   }
 }

@@ -486,7 +486,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
     return (
         <div
             ref={itemRef}
-            className={`relative bg-secondary-bg rounded-lg overflow-hidden w-full select-none ${reorderMode ? 'jiggle' : ''} ${isDragging ? 'dragging' : ''}`}
+            className={`relative bg-secondary-bg rounded-lg overflow-hidden w-full select-none group-drop-source ${reorderMode ? 'jiggle' : ''} ${isDragging ? 'dragging' : ''}`}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -501,7 +501,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
                     aria-label={t('modals.edit_account_title')}
                     data-action-button
                 >
-                    <FiEdit2 className="w-6 h-6" />
+                    <FiEdit2 size={24} aria-hidden="true" />
                 </button>
                 <button
                     onClick={() => {
@@ -512,7 +512,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
                     aria-label={t('account_item.confirm_delete_tooltip')}
                     data-action-button
                 >
-                    <FiTrash2 className="w-6 h-6" />
+                    <FiTrash2 size={24} aria-hidden="true" />
                 </button>
             </div>
             <div

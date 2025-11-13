@@ -114,5 +114,13 @@
     "switch_to_light": "Switch to light mode",
     "switch_to_dark": "Switch to dark mode",
     "switch_to_system": "Switch to system mode"
+  },
+  "groups": {
+    "all": "All",
+    "add_tab": "Add group",
+    "add_modal_title": "Create Group",
+    "add_modal_label": "Group name",
+    "name_required": "Please enter a group name.",
+    "name_duplicate": "That group already exists."
   }
 }

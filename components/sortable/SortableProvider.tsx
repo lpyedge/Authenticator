@@ -4,7 +4,8 @@ export type SortableDropTarget =
     | { type: 'before'; id: string }
     | { type: 'after'; id: string }
     | { type: 'end' }
-    | { type: 'delete' };
+    | { type: 'delete' }
+    | { type: 'group-tab'; groupId: string };
 
 interface SortableProviderProps {
     reorderMode: boolean;
@@ -37,6 +38,9 @@ const parseDropTarget = (value: string | null): SortableDropTarget | null => {
     }
     if (value === 'delete') {
         return { type: 'delete' };
+    }
+    if (value.startsWith('group:')) {
+        return { type: 'group-tab', groupId: value.slice('group:'.length) };
     }
     if (value.startsWith('before:')) {
         return { type: 'before', id: value.slice('before:'.length) };

@@ -6,4 +6,5 @@ export interface Account {
     // optional grouping and ordering metadata
     group?: string;
     order?: number;
+    groupOrder?: number;
 }

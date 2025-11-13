@@ -113,5 +113,13 @@
     "switch_to_light": "切換到淺色模式",
     "switch_to_dark": "切換到深色模式",
     "switch_to_system": "切換到系統模式"
+  },
+  "groups": {
+    "all": "全部",
+    "add_tab": "新增群組",
+    "add_modal_title": "建立群組",
+    "add_modal_label": "群組名稱",
+    "name_required": "請輸入群組名稱。",
+    "name_duplicate": "該群組已存在。"
   }
 }

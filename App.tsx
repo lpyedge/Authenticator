@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { Account } from './types';
-import LoginScreen from './components/LoginScreen';
-import MainScreen from './components/MainScreen';
 import { storageService } from './services/storageService';
 import { I18nProvider } from './contexts/I18nContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+
+const LoginScreen = lazy(() => import('./components/LoginScreen'));
+const MainScreen = lazy(() => import('./components/MainScreen'));
 
 const App: React.FC = () => {
     const [isLocked, setIsLocked] = useState<boolean>(true);
@@ -138,25 +139,27 @@ const App: React.FC = () => {
 
     return (
         <I18nProvider>
-            {isLocked ? (
-                <LoginScreen 
-                    onUnlock={handleUnlock}
-                    onSetup={handleSetup}
-                    hasData={hasData}
-                    error={error}
-                    setError={setError}
-                />
-            ) : (
-                <MainScreen 
-                    accounts={accounts} 
-                    updateAccounts={updateAccounts} 
-                    groups={groups}
-                    updateGroups={updateGroups}
-                    onLock={handleLock}
-                    masterPassword={masterPassword}
-                    onChangeMasterPassword={handleChangeMasterPassword}
-                />
-            )}
+            <Suspense fallback={<div className="app-loading" role="status">Loading…</div>}>
+                {isLocked ? (
+                    <LoginScreen 
+                        onUnlock={handleUnlock}
+                        onSetup={handleSetup}
+                        hasData={hasData}
+                        error={error}
+                        setError={setError}
+                    />
+                ) : (
+                    <MainScreen 
+                        accounts={accounts} 
+                        updateAccounts={updateAccounts} 
+                        groups={groups}
+                        updateGroups={updateGroups}
+                        onLock={handleLock}
+                        masterPassword={masterPassword}
+                        onChangeMasterPassword={handleChangeMasterPassword}
+                    />
+                )}
+            </Suspense>
         </I18nProvider>
     );
 };

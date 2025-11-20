@@ -1,42 +1,38 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useI18n } from './useI18n';
 import { TOTP } from '../libs/otpauth';
+import { useTotpTicker } from './useTotpTicker';
+
+const DEFAULT_PERIOD = 30;
 
 export const useTOTP = (secret: string) => {
     const { t } = useI18n();
+    const { timeLeft, slot } = useTotpTicker(DEFAULT_PERIOD);
     const [token, setToken] = useState('...');
-    const [timeLeft, setTimeLeft] = useState(0);
 
-    useEffect(() => {
-        let totp: TOTP;
+    const totp = useMemo(() => {
         try {
-            totp = new TOTP({
+            return new TOTP({
                 issuer: 'ACME',
                 label: 'Default',
                 algorithm: 'SHA1',
                 digits: 6,
-                period: 30,
-                secret: secret,
+                period: DEFAULT_PERIOD,
+                secret,
             });
-        } catch (e) {
-            console.error("Invalid secret key:", e);
+        } catch (error) {
+            console.error('Invalid secret key:', error);
+            return null;
+        }
+    }, [secret]);
+
+    useEffect(() => {
+        if (!totp) {
             setToken(t('account_item.invalid_secret'));
-            setTimeLeft(0);
             return;
         }
+        setToken(totp.generate());
+    }, [totp, slot, t]);
 
-        const updateToken = () => {
-            const newToken = totp.generate();
-            const newTimeLeft = (totp.period - (Math.floor(Date.now() / 1000) % totp.period));
-            setToken(newToken);
-            setTimeLeft(newTimeLeft);
-        };
-
-        updateToken(); // Initial update
-        const intervalId = setInterval(updateToken, 1000);
-
-        return () => clearInterval(intervalId);
-    }, [secret, t]);
-
-    return { token, timeLeft };
+    return { token, timeLeft: totp ? timeLeft : 0 };
 };

@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Account } from '../../types';
 import BaseModal from './BaseModal';
-import ScanQRModal from './ScanQRModal';
 import ImportConfirmModal from './ImportConfirmModal';
 import { ParsedOtpParameters } from '../../libs/migration';
 import { useI18n } from '../../hooks/useI18n';
 import { useToast } from '../Toast';
 import { URI } from '../../libs/otpauth';
+
+const ScanQRModal = lazy(() => import('./ScanQRModal'));
 
 interface AddEditAccountModalProps {
     isOpen: boolean;
@@ -287,9 +288,9 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                     {!isEditMode && (
                         <>
                             <div className="relative flex items-center">
-                                <div className="flex-grow" style={{ borderTop: '1px solid rgb(var(--border))' }}></div>
+                                <div className="flex-grow divider-line"></div>
                                 <span className="flex-shrink mx-4 text-sm text-muted">{t('modals.or_divider')}</span>
-                                <div className="flex-grow" style={{ borderTop: '1px solid rgb(var(--border))' }}></div>
+                                <div className="flex-grow divider-line"></div>
                             </div>
                             <div>
                                 <textarea
@@ -311,13 +312,17 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                         <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg themed-btn themed-btn-secondary">
                             {t('modals.cancel_button')}
                         </button>
-                        <button type="submit" disabled={isSaveDisabled} className="px-4 py-2 rounded-lg themed-btn themed-btn-primary" style={{ opacity: isSaveDisabled ? 0.5 : 1 }}>
+                        <button type="submit" disabled={isSaveDisabled} className="px-4 py-2 rounded-lg themed-btn themed-btn-primary">
                             {t('modals.save_button')}
                         </button>
                     </div>
                 </form>
             </BaseModal>
-            <ScanQRModal isOpen={isScanModalOpen} onClose={handleScanSuccess} />
+            {isScanModalOpen && (
+                <Suspense fallback={null}>
+                    <ScanQRModal isOpen={isScanModalOpen} onClose={handleScanSuccess} />
+                </Suspense>
+            )}
             {showImportConfirm && pendingImportAccounts && (
                 <ImportConfirmModal isOpen={showImportConfirm} onClose={() => { setShowImportConfirm(false); setPendingImportAccounts(null); }} count={pendingImportAccounts.length} onConfirm={(mode) => performImport(mode)} />
             )}

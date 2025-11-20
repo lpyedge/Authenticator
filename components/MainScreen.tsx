@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, Suspense, lazy } from 'react';
 import { Account } from '../types';
 import AccountList from './AccountList';
 import { ToastProvider } from './Toast';
-import AddEditAccountModal from './modals/AddEditAccountModal';
-import SettingsModal from './modals/SettingsModal';
 import DeleteConfirmModal from './modals/DeleteConfirmModal';
 import { FiPlus, FiLock, FiSettings, FiCheck, FiTrash2 } from 'react-icons/fi';
 import { useI18n } from '../hooks/useI18n';
@@ -12,6 +10,9 @@ import { ThemeSwitcher } from './ThemeSwitcher';
 import { SortableProvider, SortableDropTarget, useSortableContext } from './sortable/SortableProvider';
 import GroupTabs from './GroupTabs';
 import AddGroupModal from './modals/AddGroupModal';
+
+const AddEditAccountModal = lazy(() => import('./modals/AddEditAccountModal'));
+const SettingsModal = lazy(() => import('./modals/SettingsModal'));
 
 interface MainScreenProps {
     accounts: Account[];
@@ -432,24 +433,28 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
                     </footer>
 
                     {isAddEditModalOpen && (
-                        <AddEditAccountModal
-                            isOpen={isAddEditModalOpen}
-                            onClose={closeAddEditModal}
-                            onSave={editingAccount ? handleEditAccount : handleAddAccount}
-                            onImportAccounts={handleImportAccounts}
-                            account={editingAccount}
-                        />
+                        <Suspense fallback={null}>
+                            <AddEditAccountModal
+                                isOpen={isAddEditModalOpen}
+                                onClose={closeAddEditModal}
+                                onSave={editingAccount ? handleEditAccount : handleAddAccount}
+                                onImportAccounts={handleImportAccounts}
+                                account={editingAccount}
+                            />
+                        </Suspense>
                     )}
 
                     {isSettingsModalOpen && (
-                        <SettingsModal
-                            isOpen={isSettingsModalOpen}
-                            onClose={() => setSettingsModalOpen(false)}
-                            accounts={accounts}
-                            updateAccounts={updateAccounts}
-                            currentMasterPassword={masterPassword}
-                            onChangeMasterPassword={onChangeMasterPassword}
-                        />
+                        <Suspense fallback={null}>
+                            <SettingsModal
+                                isOpen={isSettingsModalOpen}
+                                onClose={() => setSettingsModalOpen(false)}
+                                accounts={accounts}
+                                updateAccounts={updateAccounts}
+                                currentMasterPassword={masterPassword}
+                                onChangeMasterPassword={onChangeMasterPassword}
+                            />
+                        </Suspense>
                     )}
 
                     <DeleteConfirmModal

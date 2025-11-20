@@ -4,27 +4,27 @@
 
 @layer base {
   :root {
-    --warning: 255 193 7; /* Bootstrap warning */
-    --bg-primary: 255 255 255; /* 白色背景 */
-    --bg-secondary: 248 249 250; /* Bootstrap 的次背景色 */
-    --text-primary: 33 37 41; /* 深灰色文字 */
-    --text-secondary: 108 117 125; /* 中灰色文字 */
-    --accent: 0 123 255; /* Bootstrap 的藍色主題色 */
-    --error: 220 53 69; /* Bootstrap 的紅色錯誤色 */
-    --success: 40 167 69; /* Bootstrap 的綠色成功色 */
-    --border: 222 226 230; /* 淡灰色邊框 */
+    --warning: 255, 193, 7; /* Bootstrap warning */
+    --bg-primary: 255, 255, 255; /* 白色背景 */
+    --bg-secondary: 248, 249, 250; /* Bootstrap 的次背景色 */
+    --text-primary: 33, 37, 41; /* 深灰色文字 */
+    --text-secondary: 108, 117, 125; /* 中灰色文字 */
+    --accent: 0, 123, 255; /* Bootstrap 的藍色主題色 */
+    --error: 220, 53, 69; /* Bootstrap 的紅色錯誤色 */
+    --success: 40, 167, 69; /* Bootstrap 的綠色成功色 */
+    --border: 222, 226, 230; /* 淡灰色邊框 */
   }
 
   .dark {
-    --warning: 255 193 7;
-    --bg-primary: 18 20 26; /* 深色背景 */
-    --bg-secondary: 32 37 47; /* 深灰色背景 */
-    --text-primary: 235 238 245; /* 白色文字 */
-    --text-secondary: 159 167 181; /* 淡灰色文字 */
-    --accent: 87 147 255; /* 冷色調主題色 */
-    --error: 238 108 123; /* 紅色錯誤色 */
-    --success: 76 201 140; /* 綠色成功色 */
-    --border: 56 63 76; /* 深灰色邊框 */
+    --warning: 255, 196, 99;
+    --bg-primary: 21, 25, 32; /* 暗色背景 */
+    --bg-secondary: 33, 41, 54; /* 次級容器 */
+    --text-primary: 237, 242, 247; /* 高對比文字 */
+    --text-secondary: 182, 193, 210; /* 輔助文字 */
+    --accent: 118, 169, 250; /* 柔和藍 */
+    --error: 244, 114, 182; /* 霓虹桃紅 */
+    --success: 34, 197, 154; /* 青綠 */
+    --border: 62, 72, 90; /* 柔和邊框 */
   }
 }
 
@@ -91,6 +91,10 @@
   background-color: rgb(var(--error));
   color: #fff;
 }
+.themed-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .themed-card {
   background-color: rgb(var(--bg-secondary));
@@ -99,9 +103,26 @@
   padding: 1rem;
 }
 
+.themed-card-warning {
+  background-color: rgba(255,193,7,0.08);
+  border-color: rgba(255,193,7,0.2);
+}
+
+.text-warning-strong {
+  color: rgb(102 58 0);
+}
+
 .text-muted { color: rgba(var(--text-primary), 0.75); }
 .text-primary { color: rgb(var(--text-primary)); }
 .bg-muted { background-color: rgb(var(--bg-secondary)); }
+
+.divider-line {
+  border-top: 1px solid rgb(var(--border));
+}
+
+.border-muted {
+  border-color: rgb(var(--border));
+}
 
 /* select styling for language chooser */
 .themed-select {
@@ -401,137 +422,128 @@ body {
 }
 
 
+
 .group-tabs-wrapper {
   width: 100%;
-  overflow: hidden;
-  padding: 0.35rem 0.55rem 0;
-  border-radius: 0.5rem 0.5rem 0 0;
-  background-color: rgba(var(--bg-primary), 0.9);
-  border: none;
-  border-bottom: 1px solid rgba(var(--border), 0.9);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-}
-
-.group-tabs-wrapper[data-reorder-mode="true"] {
-  opacity: 0.92;
+  margin-bottom: 1rem;
+  padding: 0 0.25rem;
+  background-color: rgb(var(--bg-primary));
+  border-bottom: 1px solid rgba(var(--border), 1);
 }
 
 .group-tabs-scroll {
   display: flex;
   align-items: flex-end;
-  gap: 0;
+  gap: 0.4rem;
   overflow-x: auto;
-  padding-bottom: 0;
-  scroll-snap-type: x mandatory;
+  overflow-y: hidden;
+  padding: 0.45rem 0.25rem 0;
+  -ms-overflow-style: none; /* IE/Edge */
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+@supports (scrollbar-width: none) {
+  .group-tabs-scroll {
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+.group-tabs-wrapper[data-reorder-mode="true"] .group-tabs-scroll {
+  opacity: 0.9;
 }
 
 .group-tabs-scroll::-webkit-scrollbar {
-  height: 6px;
+  display: none; /* WebKit */
 }
 
-.group-tabs-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(var(--text-secondary), 0.35);
-  border-radius: 9999px;
+.group-tabs-scroll.is-dragging,
+.group-tabs-scroll:active {
+  cursor: grabbing;
 }
-
 
 .group-tab {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  height: 2.5rem;
-  padding: 0 1.05rem;
-  border-radius: 0.5rem 0.5rem 0 0;
-  border: 1px solid transparent;
-  border-bottom: none;
+  padding: 0.4rem 1rem;
+  min-height: 2.25rem;
+  border-radius: 0.55rem 0.55rem 0 0;
+  border: 1px solid rgba(var(--border), 0.8) !important;
+  border-bottom-color: rgba(var(--border), 0.8) !important;
   margin-bottom: -1px;
-  margin-left: 0;
-  color: rgb(var(--text-secondary));
-  background-color: transparent;
+  color: rgb(var(--text-secondary)) !important;
+  background-color: rgba(var(--bg-secondary), 0.92) !important;
   cursor: pointer;
-  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
-  scroll-snap-align: start;
-  min-width: 3rem;
+  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  font-weight: 500;
   box-sizing: border-box;
 }
 
-.group-tab + .group-tab {
-  margin-left: -1px;
+button.group-tab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.4rem 1rem;
+  min-height: 2.25rem;
+  border-radius: 0.55rem 0.55rem 0 0;
+  border: 1px solid rgba(var(--border), 0.8) !important;
+  border-bottom-color: rgba(var(--border), 0.8) !important;
+  margin-bottom: -1px;
+  color: rgb(var(--text-secondary)) !important;
+  background-color: rgba(var(--bg-secondary), 0.92) !important;
+  cursor: pointer;
+  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  font-weight: 500;
+  box-sizing: border-box;
 }
 
-.group-tab:first-of-type {
-  margin-left: 0;
+button.group-tab:hover {
+  color: rgb(var(--text-primary)) !important;
+  background-color: rgba(var(--bg-primary), 0.95) !important;
+  border-color: rgba(var(--border), 1) !important;
 }
 
-.group-tab:hover {
-  color: rgb(var(--accent));
-  background-color: rgba(var(--bg-primary), 0.9);
-  border-color: rgba(var(--border), 0.95);
-  border-bottom-color: rgba(var(--border), 0.95);
+button.group-tab-active,
+button.group-tab[data-state="active"] {
+  color: rgb(var(--text-primary)) !important;
+  background-color: rgba(var(--bg-primary), 1) !important;
+  border-color: rgba(var(--border), 1) !important;
+  border-bottom-color: rgb(var(--bg-primary)) !important;
+  box-shadow: 0 2px 0 rgba(var(--border), 0.3) !important;
 }
-
-.group-tab-active,
-.group-tab[data-state="active"] {
-  color: rgb(var(--text-primary));
-  background-color: rgb(var(--bg-primary));
-  border-color: rgba(var(--border), 0.95);
-  border-bottom-color: rgb(var(--bg-primary));
-  font-weight: 600;
-}
-
-.group-tab-drop,
-.group-tab[data-drop="true"] {
-  border-style: dashed;
-  border-color: rgba(var(--accent), 0.9);
-  border-bottom-color: rgb(var(--bg-primary));
-  background-color: rgba(var(--accent), 0.14);
-  color: rgb(var(--accent));
-}
-
-.group-tab-all-disabled {
-  cursor: not-allowed !important;
-  opacity: 0.7;
-}
-
-.group-tab[data-dragging="true"][data-all="true"] {
-  cursor: not-allowed;
-}
-
-.group-tab[data-dragging="true"][data-all="true"]:hover {
-  border-color: rgba(var(--border), 0.78);
-  color: rgb(var(--text-secondary));
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
-}
-
 
 .group-tab-add {
-  width: 2.6rem;
-  height: 2.5rem;
+  flex: 0 0 auto;
+  min-width: 2.4rem;
+  height: 2.25rem;
   padding: 0;
-  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0.55rem 0.55rem 0 0;
+  border: 1px solid rgba(var(--border), 0.8) !important;
+  border-bottom-color: rgba(var(--border), 0.8) !important;
+  background-color: rgba(var(--bg-secondary), 0.92) !important;
 }
 
-.group-tab-add:hover svg,
-.group-tab-add:focus-visible svg {
-  transform: scale(1.08);
+button.group-tab-add svg {
+  stroke: currentColor !important;
 }
 
-.group-tab-add svg {
-  transition: transform 0.18s ease;
+.dark button.group-tab {
+  background-color: rgba(var(--bg-secondary), 0.6) !important;
+  border-color: rgba(var(--border), 0.7) !important;
 }
 
-.group-tab-add[data-drop="true"] {
-  border-style: dashed;
-  border-color: rgba(var(--accent), 0.9);
-  border-bottom-color: rgb(var(--bg-primary));
-  background-color: rgba(var(--accent), 0.18);
-  color: rgb(var(--accent));
+.dark button.group-tab-active,
+.dark button.group-tab[data-state="active"] {
+  background-color: rgba(var(--bg-primary), 1) !important;
+  border-color: rgba(var(--border), 1) !important;
 }
 
 .add-group-label {
@@ -622,7 +634,7 @@ body {
   padding: 0.125rem 0.5rem;
   border-radius: 9999px;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 

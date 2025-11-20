@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { getInitialLocale } from '../i18n/config';
+import { DEFAULT_LOCALE, getInitialLocale } from '../i18n/config';
 
 type I18nContextType = {
     locale: string;
@@ -8,21 +8,17 @@ type I18nContextType = {
 };
 
 export const I18nContext = createContext<I18nContextType | undefined>(undefined);
+type TranslationTree = Record<string, unknown>;
 
-const fetchTranslations = async (locale: string) => {
-    try {
-        const response = await fetch(`/i18n/locales/${locale}.json`);
-        if (!response.ok) {
-            console.error(`Could not load ${locale} translations, falling back to English.`);
-            const fallbackResponse = await fetch('/i18n/locales/en.json');
-            return fallbackResponse.json();
-        }
-        return response.json();
-    } catch (error) {
-        console.error('Error fetching translations:', error);
-        const fallbackResponse = await fetch('/i18n/locales/en.json');
-        return fallbackResponse.json();
-    }
+const localeModules = import.meta.glob('../i18n/locales/*.json', {
+    eager: true,
+    import: 'default',
+}) as Record<string, TranslationTree>;
+
+const loadTranslations = (locale: string): TranslationTree => {
+    const moduleKey = `../i18n/locales/${locale}.json`;
+    const fallbackKey = `../i18n/locales/${DEFAULT_LOCALE}.json`;
+    return localeModules[moduleKey] ?? localeModules[fallbackKey] ?? {};
 };
 
 const getNestedValue = (obj: any, path: string) => {
@@ -30,11 +26,12 @@ const getNestedValue = (obj: any, path: string) => {
 };
 
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [locale, setLocaleState] = useState(getInitialLocale());
-    const [translations, setTranslations] = useState({});
+    const initialLocale = getInitialLocale();
+    const [locale, setLocaleState] = useState(initialLocale);
+    const [translations, setTranslations] = useState<TranslationTree>(() => loadTranslations(initialLocale));
 
     useEffect(() => {
-        fetchTranslations(locale).then(setTranslations);
+        setTranslations(loadTranslations(locale));
         document.documentElement.lang = locale;
         localStorage.setItem('locale', locale);
     }, [locale]);

@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { Account } from '../../types';
 import BaseModal from './BaseModal';
 import { cryptoService } from '../../services/cryptoService';
 import { useI18n } from '../../hooks/useI18n';
-import GoogleAuthenticatorExportModal from './GoogleAuthenticatorExportModal';
 import ImportConfirmModal from './ImportConfirmModal';
 import { useToast } from '../Toast';
 import { FiKey, FiRefreshCw } from 'react-icons/fi';
 import { parseMigrationUri } from '../../libs/migration';
+
+const GoogleAuthenticatorExportModal = lazy(() => import('./GoogleAuthenticatorExportModal'));
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -171,7 +172,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         setImportError(null);
         
         if (file.name.endsWith('.zip')) {
-            setImportStage('password');
+            resetImportFlow();
+            setImportError('errors.import_invalid_json');
+            return;
         } else if (file.name.startsWith('otpauth-migration')) {
             // Handle Google Authenticator migration file
             setImportStage('password');
@@ -364,8 +367,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
                 )}
                 {exportStage === 'confirm_plain' && (
-                    <div className="themed-card" style={{ backgroundColor: 'rgba(255,193,7,0.08)', borderColor: 'rgba(255,193,7,0.2)' }}>
-                        <p className="text-sm font-medium" style={{ color: 'rgb(102 58 0)' }}>{t('modals.export_plain_warning')}</p>
+                    <div className="themed-card themed-card-warning">
+                        <p className="text-sm font-medium text-warning-strong">{t('modals.export_plain_warning')}</p>
                         <div className="flex justify-end space-x-3">
                             <button onClick={() => setExportStage('idle')} className="px-4 py-2 rounded-lg themed-btn themed-btn-secondary text-sm">{t('modals.cancel_button')}</button>
                             <button onClick={handleConfirmPlainText} className="px-4 py-2 rounded-lg themed-btn themed-btn-warning text-sm">{t('modals.confirm_export_button')}</button>
@@ -380,7 +383,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                         </div>
                         <div className="flex justify-end space-x-3">
                             <button type="button" onClick={() => setExportStage('idle')} className="px-4 py-2 rounded-lg themed-btn themed-btn-secondary text-sm">{t('modals.cancel_button')}</button>
-                            <button type="submit" disabled={isGenerating || !encryptionPassword} className="px-4 py-2 rounded-lg themed-btn themed-btn-primary text-sm" style={{ opacity: isGenerating || !encryptionPassword ? 0.5 : 1 }}>{isGenerating ? t('modals.generating_button') : t('modals.generate_and_download_button')}</button>
+                            <button type="submit" disabled={isGenerating || !encryptionPassword} className="px-4 py-2 rounded-lg themed-btn themed-btn-primary text-sm">{isGenerating ? t('modals.generating_button') : t('modals.generate_and_download_button')}</button>
                         </div>
                     </form>
                 )}
@@ -408,7 +411,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                         {importError && <p className="text-red-400 text-sm">{t(importError)}</p>}
                         <div className="flex justify-end space-x-3">
                             <button type="button" onClick={resetImportFlow} className="px-4 py-2 rounded-lg themed-btn themed-btn-secondary text-sm">{t('modals.cancel_button')}</button>
-                            <button type="submit" disabled={importIsLoading || !importPassword} className="px-4 py-2 rounded-lg themed-btn themed-btn-primary text-sm" style={{ opacity: importIsLoading || !importPassword ? 0.5 : 1 }}>{importIsLoading ? t('modals.generating_button') : t('modals.import_unlock_button')}</button>
+                            <button type="submit" disabled={importIsLoading || !importPassword} className="px-4 py-2 rounded-lg themed-btn themed-btn-primary text-sm">{importIsLoading ? t('modals.generating_button') : t('modals.import_unlock_button')}</button>
                         </div>
                     </form>
                 )}
@@ -420,7 +423,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     return (
       <>
         <BaseModal isOpen={isOpen} onClose={onClose} title={t('modals.settings_title')}>
-                <div className="border-b" style={{ borderColor: 'rgb(var(--border))' }}>
+            <div className="border-b border-muted">
                 <nav className="-mb-px flex space-x-2" aria-label="Tabs">
                     <button
                         onClick={() => setActiveTab('password')}
@@ -440,11 +443,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             {activeTab === 'password' ? renderChangePasswordTab() : renderImportExportTab()}
         </BaseModal>
-        <GoogleAuthenticatorExportModal 
-            isOpen={isGoogleAuthExportOpen}
-            onClose={() => setGoogleAuthExportOpen(false)}
-            accounts={accounts}
-        />
+        {isGoogleAuthExportOpen && (
+            <Suspense fallback={null}>
+                <GoogleAuthenticatorExportModal 
+                    isOpen={isGoogleAuthExportOpen} 
+                    onClose={() => setGoogleAuthExportOpen(false)} 
+                    accounts={accounts} 
+                />
+            </Suspense>
+        )}
                 <ImportConfirmModal
                     isOpen={showImportConfirmModal}
                     onClose={() => resetImportFlow()}

@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import { FiPlus } from 'react-icons/fi';
 import { useSortableContext } from './sortable/SortableProvider';
+import { Account } from '../types';
 
 interface GroupTabsProps {
     groups: string[];
@@ -12,11 +13,72 @@ interface GroupTabsProps {
         all: string;
         add: string;
     };
+    accounts: Account[];
+    onMoveGroup?: (draggedGroup: string, targetGroup: string, position: 'before' | 'after') => void;
 }
 
-const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGroup, onRequestAddGroup, reorderMode, labels }) => {
-    const { draggedId, dragTarget } = useSortableContext();
+const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGroup, onRequestAddGroup, reorderMode, labels, accounts, onMoveGroup }) => {
+    const { draggedId, dragTarget, startDragSession, updateDragTarget } = useSortableContext();
     const scrollRef = useRef<HTMLDivElement | null>(null);
+    const autoScrollRef = useRef<number | null>(null);
+
+    // Auto-scroll logic
+    useEffect(() => {
+        if (!draggedId) {
+            if (autoScrollRef.current) {
+                cancelAnimationFrame(autoScrollRef.current);
+                autoScrollRef.current = null;
+            }
+            return;
+        }
+
+        const container = scrollRef.current;
+        if (!container) return;
+
+        let scrollSpeed = 0;
+
+        const handlePointerMove = (e: PointerEvent) => {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX;
+            const zoneSize = 80; // Activation zone size
+            const maxSpeed = 12; // Max scroll speed
+
+            // Check if pointer is within the vertical bounds of the container (plus some margin)
+            if (e.clientY < rect.top - 50 || e.clientY > rect.bottom + 50) {
+                scrollSpeed = 0;
+                return;
+            }
+
+            if (x < rect.left + zoneSize) {
+                const distance = Math.max(0, x - rect.left);
+                const intensity = 1 - (distance / zoneSize);
+                scrollSpeed = -maxSpeed * intensity;
+            } else if (x > rect.right - zoneSize) {
+                const distance = Math.max(0, rect.right - x);
+                const intensity = 1 - (distance / zoneSize);
+                scrollSpeed = maxSpeed * intensity;
+            } else {
+                scrollSpeed = 0;
+            }
+        };
+
+        const scrollLoop = () => {
+            if (scrollSpeed !== 0 && container) {
+                container.scrollLeft += scrollSpeed;
+            }
+            autoScrollRef.current = requestAnimationFrame(scrollLoop);
+        };
+
+        window.addEventListener('pointermove', handlePointerMove);
+        autoScrollRef.current = requestAnimationFrame(scrollLoop);
+
+        return () => {
+            window.removeEventListener('pointermove', handlePointerMove);
+            if (autoScrollRef.current) {
+                cancelAnimationFrame(autoScrollRef.current);
+            }
+        };
+    }, [draggedId]);
 
     useEffect(() => {
         console.log('GroupTabs Debug Info:', {
@@ -50,6 +112,24 @@ const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGrou
         return ordered;
     }, [groups]);
 
+    const groupCounts = useMemo(() => {
+        const counts: Record<string, number> = {};
+        // Initialize counts for all groups to 0
+        groups.forEach(g => counts[g] = 0);
+        counts[''] = 0; // For 'All' tab
+
+        accounts.forEach(acc => {
+            // Count for 'All'
+            counts[''] = (counts[''] || 0) + 1;
+            
+            // Count for specific group
+            if (acc.group) {
+                counts[acc.group] = (counts[acc.group] || 0) + 1;
+            }
+        });
+        return counts;
+    }, [groups, accounts]);
+
     const handleSelect = useCallback((groupId: string) => {
         onSelectGroup(groupId);
     }, [onSelectGroup]);
@@ -60,33 +140,75 @@ const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGrou
         const isActive = activeGroup === groupId;
         const isDragging = Boolean(draggedId);
         const isAllTab = key === '__all__';
-        const isDropTarget = !isAllTab && dragTarget?.type === 'group-tab' && dragTarget.groupId === key;
+        
+        // Check if this tab is a drop target for an account
+        const isAccountDropTarget = !isAllTab && dragTarget?.type === 'group-tab' && dragTarget.groupId === key;
+        
+        // Check if this tab is a drop target for another group
+        const isGroupReorderTargetBefore = dragTarget?.type === 'reorder-group-before' && dragTarget.groupId === groupId;
+        const isGroupReorderTargetAfter = dragTarget?.type === 'reorder-group-after' && dragTarget.groupId === groupId;
+        
+        const isDropTarget = isAccountDropTarget;
+
         const dataTarget = !isAllTab ? `group:${key}` : undefined;
+        
+        const count = groupCounts[groupId] || 0;
+
         const classNames = [
             'group-tab',
             isActive ? 'group-tab-active' : '',
-            isDropTarget ? 'group-tab-drop' : '',
-            isAllTab && isDragging ? 'group-tab-all-disabled' : '',
+            isAccountDropTarget ? 'group-tab-drop' : '',
+            isAllTab && isDragging && !draggedId?.startsWith('group-tab:') ? 'group-tab-all-disabled' : '',
+            draggedId === `group-tab:${groupId}` ? 'group-tab-dragging' : '',
         ].filter(Boolean).join(' ');
 
+        const handlePointerDown = (e: React.PointerEvent) => {
+            if (reorderMode && !isAllTab) {
+                // We need to prevent the scroll logic if it was active, but it's disabled in reorderMode.
+                // We should start dragging.
+                startDragSession(`group-tab:${groupId}`);
+                e.stopPropagation();
+            }
+        };
+
+        const handlePointerEnter = () => {
+            if (draggedId && draggedId.startsWith('group-tab:') && draggedId !== `group-tab:${groupId}` && !isAllTab) {
+                 const draggedGroup = draggedId.slice('group-tab:'.length);
+                 const draggedIndex = groupEntries.indexOf(draggedGroup);
+                 const targetIndex = groupEntries.indexOf(groupId);
+                 
+                 if (draggedIndex < targetIndex) {
+                     updateDragTarget(`reorder-group-after:${groupId}`);
+                 } else {
+                     updateDragTarget(`reorder-group-before:${groupId}`);
+                 }
+            }
+        };
+
         return (
-            <button
-                key={key}
-                className={classNames}
-                onClick={(event) => {
-                    handleSelect(groupId);
-                }}
-                data-sortable-target={draggedId && dataTarget ? dataTarget : undefined}
-                data-group-tab={key}
-                data-state={isActive ? 'active' : 'inactive'}
-                data-drop={isDropTarget ? 'true' : 'false'}
-                data-dragging={isDragging ? 'true' : 'false'}
-                data-all={isAllTab ? 'true' : 'false'}
-                aria-current={isActive ? 'page' : undefined}
-                type="button"
-            >
-                <span className="truncate">{label}</span>
-            </button>
+            <div key={key} className="group-tab-wrapper">
+                {isGroupReorderTargetBefore && <div className="group-reorder-indicator-before" />}
+                <button
+                    className={classNames}
+                    onClick={(event) => {
+                        handleSelect(groupId);
+                    }}
+                    onPointerDown={handlePointerDown}
+                    onPointerEnter={handlePointerEnter}
+                    data-sortable-target={draggedId && !draggedId.startsWith('group-tab:') && dataTarget ? dataTarget : undefined}
+                    data-group-tab={key}
+                    data-state={isActive ? 'active' : 'inactive'}
+                    data-drop={isDropTarget ? 'true' : 'false'}
+                    data-dragging={isDragging ? 'true' : 'false'}
+                    data-all={isAllTab ? 'true' : 'false'}
+                    aria-current={isActive ? 'page' : undefined}
+                    type="button"
+                >
+                    <span className="truncate">{label}</span>
+                    {count > 0 && <span className="group-tab-badge">{count}</span>}
+                </button>
+                {isGroupReorderTargetAfter && <div className="group-reorder-indicator-after" />}
+            </div>
         );
     };
 

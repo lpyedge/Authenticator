@@ -166,6 +166,41 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
     const handleReorderCommit = useCallback((draggedId: string, target: SortableDropTarget) => {
         if (!draggedId) return;
 
+        // Handle Group Reordering
+        if (draggedId.startsWith('group-tab:')) {
+            const draggedGroup = draggedId.slice('group-tab:'.length);
+            
+            const newGroups = [...allGroups];
+            // Remove 'All' tab placeholder if present (usually empty string)
+            // But wait, 'allGroups' might contain empty string if it's in 'groups' or accounts have empty group.
+            // We only want to reorder named groups.
+            // If draggedGroup is empty string (All tab), we shouldn't be able to drag it (disabled in GroupTabs).
+            
+            const fromIndex = newGroups.indexOf(draggedGroup);
+            if (fromIndex === -1) return;
+            
+            newGroups.splice(fromIndex, 1);
+            
+            let targetGroup = '';
+            if (target.type === 'reorder-group-before' || target.type === 'reorder-group-after') {
+                targetGroup = target.groupId;
+            } else {
+                return;
+            }
+            
+            let toIndex = newGroups.indexOf(targetGroup);
+            if (toIndex === -1) return;
+            
+            if (target.type === 'reorder-group-after') {
+                toIndex += 1;
+            }
+            
+            newGroups.splice(toIndex, 0, draggedGroup);
+            
+            updateGroups(newGroups.filter(g => g));
+            return;
+        }
+
         const originalAccount = accounts.find(acc => acc.id === draggedId);
         if (!originalAccount) return;
 
@@ -415,6 +450,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
                                     all: t('groups.all'),
                                     add: t('groups.add_tab'),
                                 }}
+                                accounts={accounts}
                             />
                             <div id="account-list-toast-anchor" className="relative">
                                 <AccountList

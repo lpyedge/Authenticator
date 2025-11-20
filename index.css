@@ -896,3 +896,71 @@ button.group-tab-add svg {
   background-color: rgb(var(--bg-primary));
   color: rgb(var(--accent));
 }
+
+.group-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.35rem;
+  margin-left: 0.5rem;
+  border-radius: 9999px;
+  background-color: rgba(var(--text-secondary), 0.15);
+  color: rgb(var(--text-primary));
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.group-tab-active .group-tab-badge {
+  background-color: rgb(var(--accent));
+  color: #fff;
+}
+
+/* Update group-tab-drop for dashed border and overlay */
+.group-tab-drop {
+  position: relative;
+  border-style: dashed !important;
+  border-color: rgb(var(--accent)) !important;
+  background-color: rgba(var(--accent), 0.1) !important;
+  color: rgb(var(--accent)) !important;
+}
+
+.group-tab-drop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(var(--accent), 0.15);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.group-tab-dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.group-reorder-indicator-before,
+.group-reorder-indicator-after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: rgb(var(--accent));
+  z-index: 10;
+}
+
+.group-reorder-indicator-before {
+  left: -1px;
+}
+
+.group-reorder-indicator-after {
+  right: -1px;
+}
+
+.group-tab-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}

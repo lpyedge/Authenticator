@@ -122,6 +122,7 @@
   "alerts": {
     "export_failed": "导出过程中发生错误。",
     "password_changed_success": "主密码已成功更改！",
+    "import_summary": "导入完成：新增 {{added}} 条，跳过 {{skipped}} 条",
     "reset_confirm_message": "您确定要重置应用吗？这将永久删除所有数据。",
     "reset_confirm_message_2": "此操作无法撤销。确认重置？",
     "delete_group_confirm": "删除分组“{{groupName}}”？账户将被移动到“全部”。"

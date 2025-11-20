@@ -121,6 +121,7 @@
   "alerts": {
     "export_failed": "내보내기 중 오류가 발생했습니다.",
     "password_changed_success": "마스터 비밀번호가 성공적으로 변경되었습니다!",
+    "import_summary": "Imported: {{added}} added, {{skipped}} skipped",
     "reset_confirm_message": "Are you sure you want to reset the app? This will permanently delete all data.",
     "reset_confirm_message_2": "This action cannot be undone. Confirm reset?",
     "delete_group_confirm": "Delete group \"{{groupName}}\"? Accounts will be moved to 'All'."

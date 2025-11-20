@@ -33,6 +33,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 }) => {
     const { t } = useI18n();
     const addToast = useToast();
+    const showImportSummaryToast = useCallback((added: number, skipped: number) => {
+        const fallback = `Imported: ${added} added, ${skipped} skipped`;
+        addToast(t('alerts.import_summary', { added, skipped }) || fallback);
+    }, [addToast, t]);
     const [activeTab, setActiveTab] = useState<ActiveTab>('password');
 
     // --- Change Password State ---
@@ -478,7 +482,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                         resetImportFlow();
                         const summary = executeImport(mode, dataSnapshot);
                         if (mode === 'merge' && summary) {
-                            addToast(`Imported: ${summary.added} added, ${summary.skipped} skipped`);
+                            showImportSummaryToast(summary.added, summary.skipped);
                         }
                     }}
                 />

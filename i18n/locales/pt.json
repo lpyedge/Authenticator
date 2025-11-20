@@ -123,6 +123,7 @@
   "alerts": {
     "export_failed": "Ocorreu durante a exportação.",
     "password_changed_success": "Senha mestre alterada com sucesso!",
+    "import_summary": "Importado: {{added}} adicionados, {{skipped}} ignorados",
     "copied": "Copiado para a área de transferência",
     "delete_success": "Conta excluída com sucesso",
     "import_success": "Contas importadas com sucesso",

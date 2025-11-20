@@ -44,6 +44,10 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
     const { t } = useI18n();
     const isEditMode = account !== null;
     const addToast = useToast();
+    const showImportSummaryToast = (added: number, skipped: number) => {
+        const fallback = `Imported: ${added} added, ${skipped} skipped`;
+        addToast(t('alerts.import_summary', { added, skipped }) || fallback);
+    };
     
     const [manualIssuer, setManualIssuer] = useState('');
     const [manualAccountName, setManualAccountName] = useState('');
@@ -187,14 +191,14 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
             // call parent and receive summary via callback
             onImportAccounts(accountsToImport, mode, (summary) => {
                 if (mode === 'merge') {
-                    addToast(`Imported: ${summary.added} added, ${summary.skipped} skipped`);
+                    showImportSummaryToast(summary.added, summary.skipped);
                 }
             });
         } else {
             // Fallback: call onSave for each account (acts like merge)
             accountsToImport.forEach(acc => onSave(acc));
             if (mode === 'merge') {
-                addToast(`Imported: ${accountsToImport.length} added, 0 skipped`);
+                showImportSummaryToast(accountsToImport.length, 0);
             }
         }
 

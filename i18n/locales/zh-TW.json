@@ -121,6 +121,7 @@
   "alerts": {
     "export_failed": "匯出過程中發生錯誤。",
     "password_changed_success": "主密碼已成功變更！",
+    "import_summary": "匯入完成：新增 {{added}} 筆，略過 {{skipped}} 筆",
     "reset_confirm_message": "您確定要重設應用程式嗎？這將永久刪除所有資料。",
     "reset_confirm_message_2": "此操作無法復原。確認重設？",
     "delete_group_confirm": "刪除群組「{{groupName}}」？帳戶將被移動到「全部」。"

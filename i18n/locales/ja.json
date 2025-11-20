@@ -121,6 +121,7 @@
   "alerts": {
     "export_failed": "エクスポート中にエラーが発生しました。",
     "password_changed_success": "マスターパスワードが正常に変更されました！",
+    "import_summary": "Imported: {{added}} added, {{skipped}} skipped",
     "reset_confirm_message": "Are you sure you want to reset the app? This will permanently delete all data.",
     "reset_confirm_message_2": "This action cannot be undone. Confirm reset?",
     "delete_group_confirm": "Delete group \"{{groupName}}\"? Accounts will be moved to 'All'."

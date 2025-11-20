@@ -5,13 +5,14 @@ import { useI18n } from '../../hooks/useI18n';
 interface AddGroupModalProps {
     isOpen: boolean;
     existingGroups: string[];
+    initialValue?: string;
     onCancel: () => void;
     onSave: (name: string) => Promise<void> | void;
 }
 
 const normalize = (value: string) => value.trim().toLowerCase();
 
-const AddGroupModal: React.FC<AddGroupModalProps> = ({ isOpen, existingGroups, onCancel, onSave }) => {
+const AddGroupModal: React.FC<AddGroupModalProps> = ({ isOpen, existingGroups, initialValue = '', onCancel, onSave }) => {
     const { t } = useI18n();
     const [name, setName] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -24,15 +25,21 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({ isOpen, existingGroups, o
 
     useEffect(() => {
         if (isOpen) {
-            setName('');
+            setName(initialValue);
             setError(null);
         }
-    }, [isOpen]);
+    }, [isOpen, initialValue]);
 
     const handleSubmit = useCallback(() => {
         const trimmed = name.trim();
         if (!trimmed) {
             setError(t('groups.name_required'));
+            return;
+        }
+
+        // If renaming to same name, just close
+        if (initialValue && normalize(trimmed) === normalize(initialValue)) {
+            onCancel();
             return;
         }
 
@@ -57,7 +64,11 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({ isOpen, existingGroups, o
     }, [handleSubmit]);
 
     return (
-        <BaseModal isOpen={isOpen} onClose={onCancel} title={t('groups.add_modal_title')}>
+        <BaseModal 
+            isOpen={isOpen} 
+            onClose={onCancel} 
+            title={initialValue ? (t('groups.edit_modal_title') || 'Edit Group') : t('groups.add_modal_title')}
+        >
             <div className="space-y-4">
                 <div className="space-y-2">
                     <label htmlFor="group-name" className="block text-sm font-medium add-group-label">

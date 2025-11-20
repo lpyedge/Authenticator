@@ -6,7 +6,10 @@
     "master_password_placeholder": "主密码",
     "confirm_password_placeholder": "确认主密码",
     "unlock_button": "解锁",
-    "create_vault_button": "创建保险库"
+    "create_vault_button": "创建保险库",
+    "reset_app_button": "重置应用 (忘记密码)",
+    "enable_biometrics": "启用生物识别 / 系统认证",
+    "use_biometrics": "使用系统认证解锁"
   },
   "main": {
     "header": "身份验证器",
@@ -14,16 +17,18 @@
     "no_accounts_subtitle": "点击“+”图标添加您的第一个账户。",
     "add_account_tooltip": "添加账户",
     "settings_tooltip": "设置",
-  "lock_tooltip": "锁定保险库",
-  "done_button": "完成",
-  "delete_drop_title": "删除",
-  "delete_drop_subtitle": "拖到这里删除",
-  "delete_drop_confirm": "要删除 {{name}} 吗？",
-  "delete_confirm_title": "删除账户",
-  "delete_confirm_message": "确定要删除“{{name}}”吗？此操作无法撤销。",
-  "delete_confirm_confirm": "删除",
-  "delete_confirm_cancel": "取消",
-  "unnamed_account": "未命名账户"
+    "lock_tooltip": "锁定保险库",
+    "done_button": "完成",
+    "delete_drop_title": "删除",
+    "delete_drop_subtitle": "拖到这里删除",
+    "edit_drop_title": "编辑",
+    "edit_drop_subtitle": "拖到这里编辑",
+    "delete_drop_confirm": "要删除 {{name}} 吗？",
+    "delete_confirm_title": "删除账户",
+    "delete_confirm_message": "确定要删除“{{name}}”吗？此操作无法撤销。",
+    "delete_confirm_confirm": "删除",
+    "delete_confirm_cancel": "取消",
+    "unnamed_account": "未命名账户"
   },
   "modals": {
     "add_account_title": "添加账户",
@@ -40,6 +45,7 @@
     "save_button": "保存",
     "cancel_button": "取消",
     "settings_title": "设置",
+    "manage_groups_title": "管理分组",
     "change_password_tab": "更改密码",
     "import_export_tab": "导入和导出",
     "current_password_label": "当前主密码",
@@ -107,14 +113,18 @@
     "import_invalid_json": "备份文件不包含有效的账户数据。",
     "qr_library_load_failed": "二维码库加载失败。请检查您的网络连接并重试。",
     "qr_generation_failed": "生成二维码失败。请重试。",
-    "export_data_error": "生成导出数据时发生错误。"
+    "export_data_error": "生成导出数据时发生错误。",
+    "group_exists": "分组已存在"
   },
   "prompts": {
     "import_password": "输入此备份文件的密码："
   },
   "alerts": {
     "export_failed": "导出过程中发生错误。",
-    "password_changed_success": "主密码已成功更改！"
+    "password_changed_success": "主密码已成功更改！",
+    "reset_confirm_message": "您确定要重置应用吗？这将永久删除所有数据。",
+    "reset_confirm_message_2": "此操作无法撤销。确认重置？",
+    "delete_group_confirm": "删除分组“{{groupName}}”？账户将被移动到“全部”。"
   },
   "theme": {
     "switch_to_light": "切换到亮色模式",
@@ -125,8 +135,14 @@
     "all": "全部",
     "add_tab": "添加分组",
     "add_modal_title": "创建分组",
+    "edit_modal_title": "编辑分组",
     "add_modal_label": "分组名称",
     "name_required": "请输入分组名称。",
     "name_duplicate": "该分组已存在。"
+  },
+  "common": {
+    "loading": "加载中...",
+    "no_groups": "暂无分组",
+    "done": "完成"
   }
 }

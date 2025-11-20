@@ -2,6 +2,8 @@ import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import { FiPlus } from 'react-icons/fi';
 import { Account } from '../types';
 import { useDroppable } from '@dnd-kit/core';
+import { useSortable, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface GroupTabsProps {
     groups: string[];
@@ -14,36 +16,100 @@ interface GroupTabsProps {
         add: string;
     };
     accounts: Account[];
-    onMoveGroup?: (draggedGroup: string, targetGroup: string, position: 'before' | 'after') => void;
+    onRequestReorderMode?: () => void;
 }
 
-const GroupTabItem: React.FC<{
+export const GroupTabItem: React.FC<{
     groupId: string;
     label: string;
     isActive: boolean;
     count: number;
-    onClick: () => void;
+    onClick?: () => void;
     isAllTab: boolean;
     reorderMode: boolean;
-}> = ({ groupId, label, isActive, count, onClick, isAllTab, reorderMode }) => {
-    const { setNodeRef, isOver } = useDroppable({
+    isOverlay?: boolean;
+    onRequestReorderMode?: () => void;
+}> = ({ groupId, label, isActive, count, onClick, isAllTab, reorderMode, isOverlay, onRequestReorderMode }) => {
+    const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+
+    // For dropping accounts INTO groups
+    const { setNodeRef: setDropRef, isOver } = useDroppable({
         id: `group-tab:${groupId || '__all__'}`,
-        data: { type: 'group-tab', groupId: groupId || '__all__' }
+        data: { type: 'group-tab', groupId: groupId || '__all__' },
+        disabled: isOverlay // Enable even in reorderMode to detect invalid drops
     });
+
+    // For sorting groups themselves
+    const {
+        attributes,
+        listeners,
+        setNodeRef: setSortRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({
+        id: `group-sort:${groupId}`,
+        disabled: !reorderMode || isAllTab || isOverlay, // "All" tab is not sortable
+        data: { type: 'group-sort', groupId }
+    });
+
+    const style: React.CSSProperties = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? undefined : 1, // Let CSS handle opacity/visibility via placeholder class
+    };
 
     const classNames = [
         'group-tab',
         isActive ? 'group-tab-active' : '',
-        isOver && !isAllTab ? 'group-tab-drop' : '', // Visual feedback for drop
+        isOver && !isAllTab ? 'group-tab-drop' : '',
+        reorderMode && !isAllTab && !isOverlay ? 'cursor-move jiggle' : '',
+        isDragging ? 'group-tab-placeholder' : '',
+        isOverlay ? 'shadow-lg ring-2 ring-accent-color ring-opacity-50 z-50 bg-bg-secondary' : ''
     ].filter(Boolean).join(' ');
 
+    // Combine refs
+    const setRef = (node: HTMLElement | null) => {
+        if (isOverlay) return;
+        setDropRef(node);
+        setSortRef(node);
+    };
+
+    // Long Press Handlers
+    const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+        if (reorderMode || isOverlay) return;
+        if (e.button !== 0) return;
+
+        longPressTimer.current = setTimeout(() => {
+            onRequestReorderMode?.();
+        }, 500);
+    };
+
+    const handlePointerMove = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    };
+
+    const handlePointerUp = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    };
+
     return (
-        <div className="group-tab-wrapper">
+        <div className="group-tab-wrapper" ref={setRef} style={!isOverlay ? style : undefined} {...(!isOverlay ? attributes : {})} {...(!isOverlay ? listeners : {})}>
             <button
-                ref={setNodeRef}
                 className={classNames}
                 onClick={onClick}
                 type="button"
+                // disabled={reorderMode} // Allow clicking to switch tabs even in reorder mode
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerUp}
             >
                 <span className="truncate">{label}</span>
                 {count > 0 && <span className="group-tab-badge">{count > 99 ? '99' : count}</span>}
@@ -52,7 +118,7 @@ const GroupTabItem: React.FC<{
     );
 };
 
-const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGroup, onRequestAddGroup, reorderMode, labels, accounts, onMoveGroup }) => {
+const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGroup, onRequestAddGroup, reorderMode, labels, accounts, onRequestReorderMode }) => {
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
     const groupEntries = useMemo(() => {
@@ -126,21 +192,42 @@ const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGrou
         };
     }, [reorderMode]);
 
+    const sortableItems = useMemo(() => {
+        return groupEntries.filter(g => g !== '').map(g => `group-sort:${g}`);
+    }, [groupEntries]);
+
     return (
         <div className="group-tabs-wrapper" data-reorder-mode={reorderMode ? 'true' : 'false'}>
             <div className="group-tabs-scroll" ref={scrollRef}>
-                {groupEntries.map(groupId => (
-                    <GroupTabItem
-                        key={groupId || '__all__'}
-                        groupId={groupId}
-                        label={groupId || labels.all}
-                        isActive={activeGroup === groupId}
-                        count={groupCounts[groupId] || 0}
-                        onClick={() => onSelectGroup(groupId)}
-                        isAllTab={!groupId}
-                        reorderMode={reorderMode}
-                    />
-                ))}
+                {/* Render "All" tab first (not sortable) */}
+                <GroupTabItem
+                    key="__all__"
+                    groupId=""
+                    label={labels.all}
+                    isActive={activeGroup === ''}
+                    count={groupCounts[''] || 0}
+                    onClick={() => onSelectGroup('')}
+                    isAllTab={true}
+                    reorderMode={reorderMode}
+                    onRequestReorderMode={onRequestReorderMode}
+                />
+
+                <SortableContext items={sortableItems} strategy={horizontalListSortingStrategy}>
+                    {groupEntries.filter(g => g !== '').map(groupId => (
+                        <GroupTabItem
+                            key={groupId}
+                            groupId={groupId}
+                            label={groupId}
+                            isActive={activeGroup === groupId}
+                            count={groupCounts[groupId] || 0}
+                            onClick={() => onSelectGroup(groupId)}
+                            isAllTab={false}
+                            reorderMode={reorderMode}
+                            onRequestReorderMode={onRequestReorderMode}
+                        />
+                    ))}
+                </SortableContext>
+
                 {!reorderMode && (
                     <button
                         className="group-tab group-tab-add"

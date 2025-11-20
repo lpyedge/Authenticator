@@ -14,16 +14,18 @@
     "no_accounts_subtitle": "Click the '+' icon to add your first account.",
     "add_account_tooltip": "Add Account",
     "settings_tooltip": "Settings",
-  "lock_tooltip": "Lock Vault",
-  "done_button": "Done",
-  "delete_drop_title": "Delete",
-  "delete_drop_subtitle": "Drag here to delete",
-  "delete_drop_confirm": "Delete {{name}}?",
-  "delete_confirm_title": "Delete account",
-  "delete_confirm_message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
-  "delete_confirm_confirm": "Delete",
-  "delete_confirm_cancel": "Cancel",
-  "unnamed_account": "Unnamed account"
+    "lock_tooltip": "Lock Vault",
+    "done_button": "Done",
+    "delete_drop_title": "Delete",
+    "delete_drop_subtitle": "Drag here to delete",
+    "edit_drop_title": "Edit",
+    "edit_drop_subtitle": "Drag here to edit",
+    "delete_drop_confirm": "Delete {{name}}?",
+    "delete_confirm_title": "Delete account",
+    "delete_confirm_message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+    "delete_confirm_confirm": "Delete",
+    "delete_confirm_cancel": "Cancel",
+    "unnamed_account": "Unnamed account"
   },
   "modals": {
     "add_account_title": "Add Account",
@@ -115,7 +117,8 @@
   },
   "alerts": {
     "export_failed": "An error occurred during the export.",
-    "password_changed_success": "Master password changed successfully!"
+    "password_changed_success": "Master password changed successfully!",
+    "delete_group_confirm": "Delete group \"{{groupName}}\"? Accounts will be moved to 'All'."
   },
   "theme": {
     "switch_to_light": "Switch to light mode",
@@ -126,8 +129,14 @@
     "all": "All",
     "add_tab": "Add group",
     "add_modal_title": "Create Group",
+    "edit_modal_title": "Edit Group",
     "add_modal_label": "Group name",
     "name_required": "Please enter a group name.",
     "name_duplicate": "That group already exists."
+  },
+  "common": {
+    "loading": "Loading...",
+    "no_groups": "No groups",
+    "done": "Done"
   }
 }

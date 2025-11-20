@@ -902,9 +902,9 @@ button.group-tab-add svg {
 }
 
 .reorder-delete-zone.enabled {
-  border-color: rgba(var(--error), 0.9);
-  background-color: rgba(var(--error), 0.18);
-  box-shadow: 0 0 0 3px rgba(var(--error), 0.12);
+  border-color: rgba(var(--error), 0.8);
+  background-color: rgba(var(--error), 0.1);
+  box-shadow: 0 0 0 2px rgba(var(--error), 0.1);
 }
 
 .reorder-delete-zone.active {
@@ -922,14 +922,15 @@ button.group-tab-add svg {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 9999px;
-  background-color: rgba(var(--error), 0.15);
-  color: rgb(var(--error));
+  background-color: transparent;
+  color: inherit;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.reorder-delete-zone.active .reorder-delete-icon {
-  background-color: rgb(var(--error));
-  color: #fff;
+.reorder-delete-zone.active .reorder-delete-icon,
+.reorder-edit-zone.active .reorder-delete-icon {
+  background-color: transparent;
+  color: inherit;
 }
 
 .reorder-delete-text {
@@ -1253,4 +1254,118 @@ button.group-tab-add svg {
   position: relative;
   display: flex;
   align-items: center;
+}
+
+.reorder-edit-zone,
+.reorder-delete-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px; /* Pill shape */
+  border: 1px dashed;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  height: 40px; /* Match icon button height */
+  min-width: auto;
+  cursor: default;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.reorder-edit-zone {
+  /* Base color: Success (Green) */
+  --zone-color: var(--success);
+  border-color: rgb(var(--zone-color));
+  color: rgb(var(--zone-color));
+  background-color: rgba(var(--zone-color), 0.05);
+}
+
+.reorder-delete-zone {
+  /* Base color: Error (Red) */
+  --zone-color: var(--error);
+  border-color: rgb(var(--zone-color));
+  color: rgb(var(--zone-color));
+  background-color: rgba(var(--zone-color), 0.05);
+}
+
+.reorder-edit-zone.active,
+.reorder-delete-zone.active {
+  background-color: rgba(var(--zone-color), 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(var(--zone-color), 0.2);
+  border-style: solid;
+}
+
+.reorder-edit-zone.enabled,
+.reorder-delete-zone.enabled {
+  border-color: rgba(var(--zone-color), 0.8);
+  background-color: rgba(var(--zone-color), 0.1);
+  box-shadow: 0 0 0 2px rgba(var(--zone-color), 0.1);
+}
+
+.reorder-delete-icon {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.reorder-delete-subtitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Group Tab Placeholder (when sorting) */
+.group-tab-placeholder {
+  border: 2px dashed rgb(var(--border-strong)) !important;
+  background-color: transparent !important;
+  color: transparent !important;
+  box-shadow: none !important;
+  opacity: 0.5;
+}
+
+.group-tab-placeholder > * {
+  opacity: 0;
+}
+
+/* Account Item Placeholder */
+.account-item-placeholder {
+  border: 2px dashed rgb(var(--border-strong)) !important;
+  background-color: transparent !important;
+  opacity: 0.5;
+}
+
+.account-item-placeholder > * {
+  opacity: 0;
+}
+
+/* Global Dragging Cursor */
+body.is-dragging-global,
+body.is-dragging-global * {
+  cursor: grabbing !important;
+}
+
+/* Invalid Drop Cursor */
+body.is-dragging-invalid,
+body.is-dragging-invalid * {
+  cursor: no-drop !important;
+}
+
+/* Ensure drop zones don't override it (though !important handles it) */
+.reorder-edit-zone,
+.reorder-delete-zone {
+  cursor: default;
+}
+
+/* Explicit cursor for draggable items in reorder mode */
+.account-card.jiggle,
+.group-tab.jiggle {
+  cursor: grab;
+}
+
+.account-card.jiggle:active,
+.group-tab.jiggle:active {
+  cursor: grabbing;
 }

@@ -226,10 +226,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     if (textContent.startsWith('otpauth-migration://offline?data=')) {
                         const accounts = await parseMigrationUri(textContent);
                         if (accounts.length > 0) {
+                            const mapAlgo = (a: number) => {
+                                switch(a) {
+                                    case 2: return 'SHA256';
+                                    case 3: return 'SHA512';
+                                    case 4: return 'MD5';
+                                    default: return 'SHA1';
+                                }
+                            };
                             const accountsWithIds = accounts.map(acc => ({
                                 ...acc,
                                 id: Math.random().toString(36).substr(2, 9),
                                 accountName: acc.name || '',
+                                algorithm: mapAlgo(acc.algorithm),
                             }));
                             setImportData(accountsWithIds);
                             setImportStage('confirm_action');
@@ -271,7 +280,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         let finalAccounts = [...accounts];
 
         // compute summary for toast/callback: added & skipped
-        const getAccountKey = (acc: Account) => `${(acc.issuer || '').trim().toLowerCase()}|${(acc.accountName || '').trim().toLowerCase()}|${(acc.secret || '').trim()}`;
+        const getAccountKey = (acc: Account) => {
+            const base = `${(acc.issuer || '').trim().toLowerCase()}|${(acc.accountName || '').trim().toLowerCase()}|${(acc.secret || '').trim()}`;
+            const advanced = `|${acc.period || 30}|${acc.algorithm || 'SHA1'}|${acc.digits || 6}`;
+            return base + advanced;
+        };
         if (mode === 'overwrite') {
             // deduplicate incoming
             const seen = new Map<string, Account>();

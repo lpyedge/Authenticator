@@ -100,13 +100,23 @@ export const useAccountManager = () => {
         setGroups([]);
     }, []);
 
-    const updateAccounts = useCallback(async (updatedAccounts: Account[]) => {
+    const handleResetApp = useCallback(() => {
+        storageService.clearData();
+        setIsLocked(true);
+        setMasterPassword('');
+        setAccounts([]);
+        setGroups([]);
+        setHasData(false);
+        setError(null);
+    }, []);
+
+    const updateAccounts = useCallback(async (newAccounts: Account[]) => {
         if (!masterPassword) {
             console.error("Master password not set. Cannot save accounts.");
             setError("Session expired. Please lock and unlock again.");
             return;
         }
-        const normalized = normalizeAccounts(updatedAccounts);
+        const normalized = normalizeAccounts(newAccounts);
         
         const combinedGroupsSet = new Set(groups);
         normalized.forEach(acc => {
@@ -151,6 +161,7 @@ export const useAccountManager = () => {
         handleUnlock,
         handleSetup,
         handleLock,
+        handleResetApp,
         updateAccounts,
         updateGroups,
         handleChangeMasterPassword

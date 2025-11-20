@@ -18,6 +18,7 @@ const App: React.FC = () => {
         handleUnlock,
         handleSetup,
         handleLock,
+        handleResetApp,
         updateAccounts,
         updateGroups,
         handleChangeMasterPassword
@@ -30,6 +31,7 @@ const App: React.FC = () => {
                     <LoginScreen 
                         onUnlock={handleUnlock}
                         onSetup={handleSetup}
+                        onReset={handleResetApp}
                         hasData={hasData}
                         error={error}
                         setError={setError}

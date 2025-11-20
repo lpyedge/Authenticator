@@ -14,7 +14,8 @@ import {
     DragOverlay, 
     useSensor, 
     useSensors, 
-    PointerSensor, 
+    MouseSensor,
+    TouchSensor, 
     KeyboardSensor, 
     closestCenter, 
     pointerWithin,
@@ -112,9 +113,15 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
     };
 
     const sensors = useSensors(
-        useSensor(PointerSensor, {
+        useSensor(MouseSensor, {
             activationConstraint: {
                 distance: 8,
+            },
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 250,
+                tolerance: 5,
             },
         }),
         useSensor(KeyboardSensor, {
@@ -532,55 +539,62 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
                         <header className="flex justify-between items-center py-4">
                             <h1 className="text-title">{t('main.header')}</h1>
                             <div className="flex items-center gap-3">
-                                {!reorderMode ? (
-                                    <>
-                                        <button
-                                            onClick={openAddModal}
-                                            className="icon-button p-2 rounded-full"
-                                            title={t('main.add_account_tooltip')}
-                                        >
-                                            <FiPlus size={24} aria-hidden="true" />
-                                        </button>
-                                        <button
-                                            onClick={() => setSettingsModalOpen(true)}
-                                            className="icon-button p-2 rounded-full"
-                                            title={t('main.settings_tooltip')}
-                                        >
-                                            <FiSettings size={24} aria-hidden="true" />
-                                        </button>
-                                        <button
-                                            onClick={onLock}
-                                            className="icon-button p-2 rounded-full"
-                                            title={t('main.lock_tooltip')}
-                                        >
-                                            <FiLock size={24} aria-hidden="true" />
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="flex gap-2">
-                                            <EditDropZone
-                                                title={t('main.edit_drop_title') || 'Edit'}
-                                                subtitle={t('main.edit_drop_subtitle') || 'Drop to Edit'}
-                                                active={!!activeId}
-                                            />
-                                            <DeleteDropZone
-                                                title={t('main.delete_drop_title')}
-                                                subtitle={t('main.delete_drop_subtitle')}
-                                                active={!!activeId}
-                                            />
-                                        </div>
-                                        <button
-                                            onClick={() => setReorderMode(false)}
-                                            className="icon-button icon-button-accent p-2 rounded-full"
-                                            title={t('main.done_button')}
-                                        >
-                                            <FiCheck size={24} aria-hidden="true" />
-                                        </button>
-                                    </>
-                                )}
+                                <button
+                                    onClick={openAddModal}
+                                    className={`icon-button p-2 rounded-full ${reorderMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    title={t('main.add_account_tooltip')}
+                                    disabled={reorderMode}
+                                >
+                                    <FiPlus size={24} aria-hidden="true" />
+                                </button>
+                                <button
+                                    onClick={() => setReorderMode(true)}
+                                    className={`icon-button p-2 rounded-full ${reorderMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    title={t('main.edit_drop_title')}
+                                    disabled={reorderMode}
+                                >
+                                    <FiEdit2 size={24} aria-hidden="true" />
+                                </button>
+                                <button
+                                    onClick={() => setSettingsModalOpen(true)}
+                                    className={`icon-button p-2 rounded-full ${reorderMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    title={t('main.settings_tooltip')}
+                                    disabled={reorderMode}
+                                >
+                                    <FiSettings size={24} aria-hidden="true" />
+                                </button>
+                                <button
+                                    onClick={onLock}
+                                    className={`icon-button p-2 rounded-full ${reorderMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    title={t('main.lock_tooltip')}
+                                    disabled={reorderMode}
+                                >
+                                    <FiLock size={24} aria-hidden="true" />
+                                </button>
                             </div>
                         </header>
+
+                        {reorderMode && (
+                            <div className="flex justify-center items-center gap-2 mb-4 p-2 bg-secondary-bg rounded-lg border border-border animate-fade-in">
+                                <EditDropZone
+                                    title={t('main.edit_drop_title') || 'Edit'}
+                                    subtitle={t('main.edit_drop_subtitle') || 'Drop to Edit'}
+                                    active={!!activeId}
+                                />
+                                <DeleteDropZone
+                                    title={t('main.delete_drop_title')}
+                                    subtitle={t('main.delete_drop_subtitle')}
+                                    active={!!activeId}
+                                />
+                                <button
+                                    onClick={() => setReorderMode(false)}
+                                    className="icon-button icon-button-accent p-2 rounded-full ml-2"
+                                    title={t('main.done_button')}
+                                >
+                                    <FiCheck size={24} aria-hidden="true" />
+                                </button>
+                            </div>
+                        )}
 
                         <main>
                             <GroupTabs

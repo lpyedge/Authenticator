@@ -6,7 +6,10 @@
     "master_password_placeholder": "Master Password",
     "confirm_password_placeholder": "Confirm Master Password",
     "unlock_button": "Unlock",
-    "create_vault_button": "Create Vault"
+    "create_vault_button": "Create Vault",
+    "reset_app_button": "Reset App (Forgot Password)",
+    "enable_biometrics": "Enable Biometrics / System Auth",
+    "use_biometrics": "Unlock with System Auth"
   },
   "main": {
     "header": "Authenticator",
@@ -42,6 +45,7 @@
     "save_button": "Save",
     "cancel_button": "Cancel",
     "settings_title": "Settings",
+    "manage_groups_title": "Manage Groups",
     "change_password_tab": "Change Password",
     "import_export_tab": "Import & Export",
     "current_password_label": "Current Master Password",
@@ -118,6 +122,8 @@
   "alerts": {
     "export_failed": "An error occurred during the export.",
     "password_changed_success": "Master password changed successfully!",
+    "reset_confirm_message": "Are you sure you want to reset the app? This will permanently delete all data.",
+    "reset_confirm_message_2": "This action cannot be undone. Confirm reset?",
     "delete_group_confirm": "Delete group \"{{groupName}}\"? Accounts will be moved to 'All'."
   },
   "theme": {

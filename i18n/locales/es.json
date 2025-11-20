@@ -6,7 +6,10 @@
     "master_password_placeholder": "Contraseña Maestra",
     "confirm_password_placeholder": "Confirmar Contraseña Maestra",
     "unlock_button": "Desbloquear",
-    "create_vault_button": "Crear Bóveda"
+    "create_vault_button": "Crear Bóveda",
+    "reset_app_button": "Reset App (Forgot Password)",
+    "enable_biometrics": "Enable Biometrics / System Auth",
+    "use_biometrics": "Unlock with System Auth"
   },
   "main": {
     "header": "Autenticador",
@@ -18,6 +21,8 @@
   "done_button": "Listo",
   "delete_drop_title": "Eliminar",
   "delete_drop_subtitle": "Arrastra aquí para borrar",
+  "edit_drop_title": "Edit",
+  "edit_drop_subtitle": "Drag here to edit",
   "delete_drop_confirm": "¿Eliminar {{name}}?",
   "delete_confirm_title": "Eliminar cuenta",
   "delete_confirm_message": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
@@ -40,6 +45,7 @@
     "save_button": "Guardar",
     "cancel_button": "Cancelar",
     "settings_title": "Ajustes",
+    "manage_groups_title": "Manage Groups",
     "change_password_tab": "Cambiar Contraseña",
     "import_export_tab": "Importar y Exportar",
     "current_password_label": "Contraseña Maestra Actual",
@@ -114,7 +120,10 @@
   },
   "alerts": {
     "export_failed": "Ocurrió un error durante la exportación.",
-    "password_changed_success": "¡La contraseña maestra se cambió con éxito!"
+    "password_changed_success": "¡Contraseña maestra cambiada con éxito!",
+    "reset_confirm_message": "Are you sure you want to reset the app? This will permanently delete all data.",
+    "reset_confirm_message_2": "This action cannot be undone. Confirm reset?",
+    "delete_group_confirm": "Delete group \"{{groupName}}\"? Accounts will be moved to 'All'."
   },
   "theme": {
     "switch_to_light": "Cambiar a modo claro",
@@ -124,9 +133,15 @@
   "groups": {
     "all": "Todas",
     "add_tab": "Añadir grupo",
-    "add_modal_title": "Crear grupo",
+    "add_modal_title": "Crear Grupo",
+    "edit_modal_title": "Edit Group",
     "add_modal_label": "Nombre del grupo",
     "name_required": "Ingresa un nombre de grupo.",
     "name_duplicate": "Ese grupo ya existe."
+  },
+  "common": {
+    "loading": "Loading...",
+    "no_groups": "No groups",
+    "done": "Done"
   }
 }

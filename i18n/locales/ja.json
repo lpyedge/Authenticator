@@ -6,7 +6,10 @@
     "master_password_placeholder": "マスターパスワード",
     "confirm_password_placeholder": "マスターパスワードの確認",
     "unlock_button": "ロック解除",
-    "create_vault_button": "保管庫を作成"
+    "create_vault_button": "保管庫を作成",
+    "reset_app_button": "Reset App (Forgot Password)",
+    "enable_biometrics": "Enable Biometrics / System Auth",
+    "use_biometrics": "Unlock with System Auth"
   },
   "main": {
     "header": "認証システム",
@@ -18,6 +21,8 @@
   "done_button": "完了",
   "delete_drop_title": "削除",
   "delete_drop_subtitle": "ここにドラッグして削除",
+  "edit_drop_title": "Edit",
+  "edit_drop_subtitle": "Drag here to edit",
   "delete_drop_confirm": "{{name}} を削除しますか？",
   "delete_confirm_title": "アカウントを削除",
   "delete_confirm_message": "「{{name}}」を削除しますか？ この操作は元に戻せません。",
@@ -40,6 +45,7 @@
     "save_button": "保存",
     "cancel_button": "キャンセル",
     "settings_title": "設定",
+    "manage_groups_title": "Manage Groups",
     "change_password_tab": "パスワードの変更",
     "import_export_tab": "インポートとエクスポート",
     "current_password_label": "現在のマスターパスワード",
@@ -114,7 +120,10 @@
   },
   "alerts": {
     "export_failed": "エクスポート中にエラーが発生しました。",
-    "password_changed_success": "マスターパスワードが正常に変更されました！"
+    "password_changed_success": "マスターパスワードが正常に変更されました！",
+    "reset_confirm_message": "Are you sure you want to reset the app? This will permanently delete all data.",
+    "reset_confirm_message_2": "This action cannot be undone. Confirm reset?",
+    "delete_group_confirm": "Delete group \"{{groupName}}\"? Accounts will be moved to 'All'."
   },
   "theme": {
     "switch_to_light": "ライトモードに切り替え",
@@ -125,8 +134,14 @@
     "all": "すべて",
     "add_tab": "グループを追加",
     "add_modal_title": "グループを作成",
+    "edit_modal_title": "Edit Group",
     "add_modal_label": "グループ名",
     "name_required": "グループ名を入力してください。",
     "name_duplicate": "そのグループは既に存在します。"
+  },
+  "common": {
+    "loading": "Loading...",
+    "no_groups": "No groups",
+    "done": "Done"
   }
 }

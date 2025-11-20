@@ -6,7 +6,10 @@
     "master_password_placeholder": "Master-Passwort",
     "confirm_password_placeholder": "Master-Passwort bestätigen",
     "unlock_button": "Entsperren",
-    "create_vault_button": "Tresor erstellen"
+    "create_vault_button": "Tresor erstellen",
+    "reset_app_button": "Reset App (Forgot Password)",
+    "enable_biometrics": "Enable Biometrics / System Auth",
+    "use_biometrics": "Unlock with System Auth"
   },
   "main": {
     "header": "Authenticator",
@@ -18,6 +21,8 @@
   "done_button": "Fertig",
   "delete_drop_title": "Löschen",
   "delete_drop_subtitle": "Zum Löschen hier ablegen",
+  "edit_drop_title": "Edit",
+  "edit_drop_subtitle": "Drag here to edit",
   "delete_drop_confirm": "„{{name}}“ löschen?",
   "delete_confirm_title": "Konto löschen",
   "delete_confirm_message": "Möchten Sie „{{name}}“ wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
@@ -40,6 +45,7 @@
     "save_button": "Speichern",
     "cancel_button": "Abbrechen",
     "settings_title": "Einstellungen",
+    "manage_groups_title": "Manage Groups",
     "change_password_tab": "Passwort ändern",
     "import_export_tab": "Import & Export",
     "current_password_label": "Aktuelles Master-Passwort",
@@ -114,7 +120,10 @@
   },
   "alerts": {
     "export_failed": "Beim Export ist ein Fehler aufgetreten.",
-    "password_changed_success": "Master-Passwort erfolgreich geändert!"
+    "password_changed_success": "Master-Passwort erfolgreich geändert!",
+    "reset_confirm_message": "Are you sure you want to reset the app? This will permanently delete all data.",
+    "reset_confirm_message_2": "This action cannot be undone. Confirm reset?",
+    "delete_group_confirm": "Delete group \"{{groupName}}\"? Accounts will be moved to 'All'."
   },
   "theme": {
     "switch_to_light": "Zum hellen Modus wechseln",
@@ -125,8 +134,14 @@
     "all": "Alle",
     "add_tab": "Gruppe hinzufügen",
     "add_modal_title": "Gruppe erstellen",
+    "edit_modal_title": "Edit Group",
     "add_modal_label": "Gruppenname",
     "name_required": "Bitte einen Gruppennamen eingeben.",
     "name_duplicate": "Diese Gruppe existiert bereits."
+  },
+  "common": {
+    "loading": "Loading...",
+    "no_groups": "No groups",
+    "done": "Done"
   }
 }

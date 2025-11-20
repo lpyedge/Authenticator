@@ -6,7 +6,10 @@
     "master_password_placeholder": "Senha Mestre",
     "confirm_password_placeholder": "Confirmar Senha Mestre",
     "unlock_button": "Desbloquear",
-    "create_vault_button": "Criar Cofre"
+    "create_vault_button": "Criar Cofre",
+    "reset_app_button": "Reset App (Forgot Password)",
+    "enable_biometrics": "Enable Biometrics / System Auth",
+    "use_biometrics": "Unlock with System Auth"
   },
   "main": {
     "header": "Autenticador",
@@ -18,12 +21,16 @@
   "done_button": "Concluir",
   "delete_drop_title": "Excluir",
   "delete_drop_subtitle": "Arraste aqui para excluir",
+  "edit_drop_title": "Edit Mode",
+  "edit_drop_subtitle": "Drag items to reorder",
   "delete_drop_confirm": "Excluir {{name}}?",
   "delete_confirm_title": "Excluir conta",
-  "delete_confirm_message": "Tem certeza de que deseja excluir \"{{name}}\"? Essa ação não pode ser desfeita.",
-  "delete_confirm_confirm": "Excluir",
-  "delete_confirm_cancel": "Cancelar",
-  "unnamed_account": "Conta sem nome"
+  "delete_confirm_message": "Tem certeza de que deseja excluir esta conta? Esta ação não pode ser desfeita.",
+  "reset_confirm_message": "This will wipe all data. Are you sure?",
+  "delete_group_confirm": "Delete group '{group}'? Accounts will move to 'Default'.",
+  "edit_modal_title": "Edit Account",
+  "search_placeholder": "Pesquisar contas...",
+    "unnamed_account": "Conta sem nome"
   },
   "modals": {
     "add_account_title": "Adicionar Conta",
@@ -40,6 +47,7 @@
     "save_button": "Salvar",
     "cancel_button": "Cancelar",
     "settings_title": "Configurações",
+    "manage_groups_title": "Manage Groups",
     "change_password_tab": "Alterar Senha",
     "import_export_tab": "Importar e Exportar",
     "current_password_label": "Senha Mestre Atual",
@@ -114,7 +122,13 @@
   },
   "alerts": {
     "export_failed": "Ocorreu durante a exportação.",
-    "password_changed_success": "Senha mestre alterada com sucesso!"
+    "password_changed_success": "Senha mestre alterada com sucesso!",
+    "copied": "Copiado para a área de transferência",
+    "delete_success": "Conta excluída com sucesso",
+    "import_success": "Contas importadas com sucesso",
+    "import_error": "Falha ao importar contas",
+    "export_success": "Contas exportadas com sucesso",
+    "invalid_qr": "Código QR inválido"
   },
   "theme": {
     "switch_to_light": "Alternar para modo claro",
@@ -128,5 +142,15 @@
     "add_modal_label": "Nome do grupo",
     "name_required": "Digite um nome de grupo.",
     "name_duplicate": "Esse grupo já existe."
+  },
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "edit": "Edit",
+    "group_mgmt": "Group Management",
+    "add_group": "Add Group",
+    "new_group_name": "New Group Name"
   }
 }

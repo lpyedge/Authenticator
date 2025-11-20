@@ -6,7 +6,10 @@
     "master_password_placeholder": "主密碼",
     "confirm_password_placeholder": "確認主密碼",
     "unlock_button": "解鎖",
-    "create_vault_button": "建立保險庫"
+    "create_vault_button": "建立保險庫",
+    "reset_app_button": "重設應用程式 (忘記密碼)",
+    "enable_biometrics": "啟用生物辨識 / 系統驗證",
+    "use_biometrics": "使用系統驗證解鎖"
   },
   "main": {
     "header": "驗證器",
@@ -18,6 +21,8 @@
   "done_button": "完成",
   "delete_drop_title": "刪除",
   "delete_drop_subtitle": "拖曳到此刪除",
+  "edit_drop_title": "編輯",
+  "edit_drop_subtitle": "拖曳到此編輯",
   "delete_drop_confirm": "要刪除 {{name}} 嗎？",
   "delete_confirm_title": "刪除帳戶",
   "delete_confirm_message": "確定要刪除「{{name}}」嗎？此操作無法復原。",
@@ -40,6 +45,7 @@
     "save_button": "儲存",
     "cancel_button": "取消",
     "settings_title": "設定",
+    "manage_groups_title": "管理群組",
     "change_password_tab": "變更密碼",
     "import_export_tab": "匯入與匯出",
     "current_password_label": "目前主密碼",
@@ -114,7 +120,10 @@
   },
   "alerts": {
     "export_failed": "匯出過程中發生錯誤。",
-    "password_changed_success": "主密碼已成功變更！"
+    "password_changed_success": "主密碼已成功變更！",
+    "reset_confirm_message": "您確定要重設應用程式嗎？這將永久刪除所有資料。",
+    "reset_confirm_message_2": "此操作無法復原。確認重設？",
+    "delete_group_confirm": "刪除群組「{{groupName}}」？帳戶將被移動到「全部」。"
   },
   "theme": {
     "switch_to_light": "切換到淺色模式",
@@ -125,8 +134,14 @@
     "all": "全部",
     "add_tab": "新增群組",
     "add_modal_title": "建立群組",
+    "edit_modal_title": "編輯群組",
     "add_modal_label": "群組名稱",
     "name_required": "請輸入群組名稱。",
     "name_duplicate": "該群組已存在。"
+  },
+  "common": {
+    "loading": "載入中...",
+    "no_groups": "尚無群組",
+    "done": "完成"
   }
 }

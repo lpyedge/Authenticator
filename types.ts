@@ -7,4 +7,7 @@ export interface Account {
     group?: string;
     order?: number;
     groupOrder?: number;
+    period?: number;
+    algorithm?: string;
+    digits?: number;
 }

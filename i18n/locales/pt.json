@@ -78,7 +78,14 @@
   "import_confirm_title": "Importar contas digitalizadas",
   "import_confirm_message": "Foram detectadas {{count}} contas no QR digitalizado. Deseja mesclá-las no cofre ou substituir todas as contas existentes?",
   "import_merge_button": "Mesclar",
-  "import_overwrite_button": "Sobrescrever"
+  "import_overwrite_button": "Sobrescrever",
+    "advanced_options": "Opções avançadas",
+    "period_label": "Período (segundos)",
+    "period_help": "Padrão 30s. Não altere a menos que exigido pelo provedor de serviço.",
+    "algorithm_label": "Algoritmo",
+    "algorithm_help": "Padrão SHA1. Não altere a menos que exigido pelo provedor de serviço.",
+    "digits_label": "Dígitos",
+    "digits_help": "Padrão 6. Não altere a menos que exigido pelo provedor de serviço."
   },
   "account_item": {
     "copied": "Copiado!",

@@ -78,7 +78,14 @@
   "import_confirm_title": "スキャンしたアカウントをインポート",
   "import_confirm_message": "スキャンした QR から {{count}} 件のアカウントが検出されました。既存の保管庫にマージしますか、それともすべて上書きしますか？",
   "import_merge_button": "マージ",
-  "import_overwrite_button": "上書き"
+  "import_overwrite_button": "上書き",
+    "advanced_options": "詳細オプション",
+    "period_label": "期間 (秒)",
+    "period_help": "デフォルトは30秒です。サービスプロバイダーから要求されない限り変更しないでください。",
+    "algorithm_label": "アルゴリズム",
+    "algorithm_help": "デフォルトはSHA1です。サービスプロバイダーから要求されない限り変更しないでください。",
+    "digits_label": "桁数",
+    "digits_help": "デフォルトは6桁です。サービスプロバイダーから要求されない限り変更しないでください。"
   },
   "account_item": {
     "copied": "コピーしました！",

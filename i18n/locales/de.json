@@ -78,7 +78,14 @@
   "import_confirm_title": "Importierte Konten",
   "import_confirm_message": "Es wurden {{count}} Konten im gescannten QR erkannt. Möchten Sie sie in Ihren Tresor zusammenführen oder alle vorhandenen Konten überschreiben?",
   "import_merge_button": "Zusammenführen",
-  "import_overwrite_button": "Überschreiben"
+  "import_overwrite_button": "Überschreiben",
+    "advanced_options": "Erweiterte Optionen",
+    "period_label": "Zeitraum (Sekunden)",
+    "period_help": "Standard 30s. Nicht ändern, es sei denn, dies wird vom Dienstanbieter verlangt.",
+    "algorithm_label": "Algorithmus",
+    "algorithm_help": "Standard SHA1. Nicht ändern, es sei denn, dies wird vom Dienstanbieter verlangt.",
+    "digits_label": "Stellen",
+    "digits_help": "Standard 6. Nicht ändern, es sei denn, dies wird vom Dienstanbieter verlangt."
   },
   "account_item": {
     "copied": "Kopiert!",

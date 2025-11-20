@@ -78,7 +78,14 @@
   "import_confirm_title": "匯入掃描到的帳戶",
   "import_confirm_message": "在掃描的 QR 中偵測到 {{count}} 個帳戶。要將它們合併到現有保險庫，還是覆寫全部現有帳戶？",
   "import_merge_button": "合併",
-  "import_overwrite_button": "覆寫"
+  "import_overwrite_button": "覆寫",
+    "advanced_options": "進階選項",
+    "period_label": "週期 (秒)",
+    "period_help": "預設 30 秒。除非服務提供者有特殊要求，否則請勿更改。",
+    "algorithm_label": "演算法",
+    "algorithm_help": "預設 SHA1。除非服務提供者有特殊要求，否則請勿更改。",
+    "digits_label": "位數",
+    "digits_help": "預設 6 位。除非服務提供者有特殊要求，否則請勿更改。"
   },
   "account_item": {
     "copied": "已複製！",

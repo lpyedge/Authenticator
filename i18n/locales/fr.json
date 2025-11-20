@@ -78,7 +78,14 @@
   "import_confirm_title": "Importer les comptes scannés",
   "import_confirm_message": "{{count}} comptes ont été détectés dans le QR scanné. Voulez-vous les fusionner dans votre coffre ou écraser tous les comptes existants ?",
   "import_merge_button": "Fusionner",
-  "import_overwrite_button": "Remplacer"
+  "import_overwrite_button": "Remplacer",
+    "advanced_options": "Options avancées",
+    "period_label": "Période (secondes)",
+    "period_help": "Par défaut 30s. Ne pas modifier sauf si requis par le fournisseur de services.",
+    "algorithm_label": "Algorithme",
+    "algorithm_help": "Par défaut SHA1. Ne pas modifier sauf si requis par le fournisseur de services.",
+    "digits_label": "Chiffres",
+    "digits_help": "Par défaut 6. Ne pas modifier sauf si requis par le fournisseur de services."
   },
   "account_item": {
     "copied": "Copié !",

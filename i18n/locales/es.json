@@ -78,7 +78,14 @@
   "import_confirm_title": "Importar cuentas escaneadas",
   "import_confirm_message": "Se detectaron {{count}} cuentas en el QR escaneado. ¿Desea fusionarlas en su bóveda o sobrescribir todas las cuentas existentes?",
   "import_merge_button": "Fusionar",
-  "import_overwrite_button": "Sobrescribir"
+  "import_overwrite_button": "Sobrescribir",
+    "advanced_options": "Opciones avanzadas",
+    "period_label": "Período (segundos)",
+    "period_help": "Predeterminado 30s. No cambie a menos que lo requiera el proveedor del servicio.",
+    "algorithm_label": "Algoritmo",
+    "algorithm_help": "Predeterminado SHA1. No cambie a menos que lo requiera el proveedor del servicio.",
+    "digits_label": "Dígitos",
+    "digits_help": "Predeterminado 6. No cambie a menos que lo requiera el proveedor del servicio."
   },
   "account_item": {
     "copied": "¡Copiado!",

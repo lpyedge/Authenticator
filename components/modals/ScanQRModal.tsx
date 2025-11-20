@@ -56,7 +56,7 @@ const ScanQRModal: React.FC<ScanQRModalProps> = ({ isOpen, onClose }) => {
         const videoElement = videoRef.current;
         const canvasElement = canvasRef.current;
         if (!videoElement || !canvasElement) return;
-        const ctx = canvasElement.getContext('2d');
+        const ctx = canvasElement.getContext('2d', { willReadFrequently: true });
         if (!ctx) return;
 
         let mounted = true;

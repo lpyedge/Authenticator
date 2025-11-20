@@ -42,12 +42,12 @@ const QR = {
 			canvas = document.createElement('canvas');
 			canvas.width = img.naturalWidth || img.width;
 			canvas.height = img.naturalHeight || img.height;
-			const ctx = canvas.getContext('2d');
+			const ctx = canvas.getContext('2d', { willReadFrequently: true });
 			if (!ctx) throw new Error('cannot-get-canvas-context');
 			ctx.drawImage(img, 0, 0);
 		}
 
-		const ctx = canvas.getContext('2d');
+		const ctx = canvas.getContext('2d', { willReadFrequently: true });
 		if (!ctx) throw new Error('cannot-get-canvas-context');
 		const { width, height } = canvas;
 		const imageData = ctx.getImageData(0, 0, width, height);

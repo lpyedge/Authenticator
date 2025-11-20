@@ -81,10 +81,10 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
         }
     }, [reorderMode]);
 
-    const progressPercentage = (remainingTime / 30) * 100;
+    const progressPercentage = progress;
     const circumference = 2 * Math.PI * 8;
     const dashOffset = circumference * (1 - progressPercentage / 100);
-    const progressCircleClass = remainingTime === 30 ? 'otp-progress-circle no-transition' : 'otp-progress-circle';
+    const progressCircleClass = remainingTime === (account.period || 30) ? 'otp-progress-circle no-transition' : 'otp-progress-circle';
     const tokenColorClass = isTokenValid ? 'text-accent-color' : 'text-error-color';
     const timerToneClass = !isTokenValid
         ? ''
@@ -194,7 +194,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
             onPointerDown={reorderMode ? listeners?.onPointerDown : handlePointerDown}
             onPointerMove={reorderMode ? listeners?.onPointerMove : handlePointerMove}
             onPointerUp={reorderMode ? listeners?.onPointerUp : handlePointerUp}
-            onPointerCancel={reorderMode ? listeners?.onPointerCancel : undefined}
+            onPointerCancel={reorderMode ? listeners?.onPointerCancel : handlePointerUp}
         >
             <div ref={actionsRef} className="absolute top-0 right-0 h-full flex items-center z-0 swipe-actions">
                 <button

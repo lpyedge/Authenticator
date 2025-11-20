@@ -78,7 +78,14 @@
   "import_confirm_title": "导入已扫描的帐户",
   "import_confirm_message": "在扫描的 QR 中检测到 {{count}} 个帐户。要将它们合并到现有保管库，还是覆盖所有现有帐户？",
   "import_merge_button": "合并",
-  "import_overwrite_button": "覆盖"
+  "import_overwrite_button": "覆盖",
+    "advanced_options": "高级选项",
+    "period_label": "周期 (秒)",
+    "period_help": "默认 30 秒。除非服务提供商有特殊要求，否则请勿更改。",
+    "algorithm_label": "算法",
+    "algorithm_help": "默认 SHA1。除非服务提供商有特殊要求，否则请勿更改。",
+    "digits_label": "位数",
+    "digits_help": "默认 6 位。除非服务提供商有特殊要求，否则请勿更改。"
   },
   "account_item": {
     "copied": "已复制！",

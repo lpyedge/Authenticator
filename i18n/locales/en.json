@@ -79,7 +79,14 @@
   "import_confirm_title": "Import scanned accounts",
   "import_confirm_message": "Detected {{count}} accounts in the scanned QR. Do you want to merge them into your vault or overwrite all existing accounts?",
   "import_merge_button": "Merge",
-  "import_overwrite_button": "Overwrite"
+  "import_overwrite_button": "Overwrite",
+    "advanced_options": "Advanced Options",
+    "period_label": "Period (seconds)",
+    "period_help": "Default 30s. Do not change unless required by the service provider.",
+    "algorithm_label": "Algorithm",
+    "algorithm_help": "Default SHA1. Do not change unless required by the service provider.",
+    "digits_label": "Digits",
+    "digits_help": "Default 6. Do not change unless required by the service provider."
   },
   "account_item": {
     "copied": "Copied!",

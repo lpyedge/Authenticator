@@ -6,6 +6,7 @@ import { ParsedOtpParameters } from '../../libs/migration';
 import { useI18n } from '../../hooks/useI18n';
 import { useToast } from '../Toast';
 import { URI } from '../../libs/otpauth';
+import { FiChevronDown, FiChevronRight } from 'react-icons/fi';
 
 const ScanQRModal = lazy(() => import('./ScanQRModal'));
 
@@ -47,8 +48,13 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
     const [manualIssuer, setManualIssuer] = useState('');
     const [manualAccountName, setManualAccountName] = useState('');
     const [manualSecret, setManualSecret] = useState('');
+    const [manualPeriod, setManualPeriod] = useState(30);
+    const [manualAlgorithm, setManualAlgorithm] = useState('SHA1');
+    const [manualDigits, setManualDigits] = useState(6);
+    const [showAdvanced, setShowAdvanced] = useState(false);
+
     const [uriInput, setUriInput] = useState('');
-    const [parsedUriData, setParsedUriData] = useState<{ issuer: string; accountName: string; secret: string } | null>(null);
+    const [parsedUriData, setParsedUriData] = useState<{ issuer: string; accountName: string; secret: string; period?: number; algorithm?: string; digits?: number } | null>(null);
     const [uriError, setUriError] = useState('');
     const [formError, setFormError] = useState('');
     const [isScanModalOpen, setScanModalOpen] = useState(false);
@@ -62,11 +68,18 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
             setManualIssuer(account.issuer);
             setManualAccountName(account.accountName);
             setManualSecret(account.secret);
+            setManualPeriod(account.period || 30);
+            setManualAlgorithm(account.algorithm || 'SHA1');
+            setManualDigits(account.digits || 6);
         } else { // Add mode
             setManualIssuer('');
             setManualAccountName('');
             setManualSecret('');
+            setManualPeriod(30);
+            setManualAlgorithm('SHA1');
+            setManualDigits(6);
         }
+        setShowAdvanced(false);
         setUriInput('');
         setParsedUriData(null);
         setUriError('');
@@ -100,10 +113,15 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                 setUriError(t('errors.invalid_uri'));
                 setParsedUriData(null);
             } else {
+                // Cast to any to access properties that might not be in the type definition but exist in the object
+                const parsedAny = parsed as any;
                 setParsedUriData({
                     issuer: parsed.issuer,
                     accountName: parsed.label,
-                    secret: secretBase32
+                    secret: secretBase32,
+                    period: parsedAny.period,
+                    algorithm: parsedAny.algorithm,
+                    digits: parsedAny.digits
                 });
             }
         } catch (e) {
@@ -117,6 +135,9 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
     const currentIssuer = isUriActive ? (parsedUriData?.issuer || '') : manualIssuer;
     const currentAccountName = isUriActive ? (parsedUriData?.accountName || '') : manualAccountName;
     const currentSecret = isUriActive ? (parsedUriData?.secret || '') : manualSecret;
+    const currentPeriod = isUriActive ? (parsedUriData?.period || 30) : manualPeriod;
+    const currentAlgorithm = isUriActive ? (parsedUriData?.algorithm || 'SHA1') : manualAlgorithm;
+    const currentDigits = isUriActive ? (parsedUriData?.digits || 6) : manualDigits;
 
     const handleScanSuccess = (result: any) => {
         // ScanQRModal may return either a string (uri) or an array of parsed migration accounts.
@@ -128,6 +149,9 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                     setManualIssuer(String(first.issuer || first.name || ''));
                     setManualAccountName(String(first.name || ''));
                     setManualSecret(String(first.secret || '').replace(/\s/g, '').toUpperCase());
+                    setManualPeriod(first.period || 30);
+                    setManualAlgorithm(first.algorithm || 'SHA1');
+                    setManualDigits(first.digits || 6);
                 } else if (result.length > 1) {
                     // Multiple accounts: ask user with the shared ImportConfirmModal
                     setPendingImportAccounts(result as ParsedOtpParameters[]);
@@ -153,6 +177,9 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                 .toString()
                 .replace(/\s/g, '')
                 .toUpperCase(),
+            period: p.period,
+            algorithm: p.algorithm,
+            digits: p.digits
         }));
 
     // use shared showToast
@@ -190,6 +217,9 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                 ...account,
                 issuer: manualIssuer.trim(),
                 accountName: manualAccountName.trim(),
+                period: manualPeriod,
+                algorithm: manualAlgorithm,
+                digits: manualDigits,
             };
             onSave(updatedAccount);
             onClose();
@@ -221,6 +251,9 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                 issuer: manualIssuer.trim(),
                 accountName: manualAccountName.trim(),
                 secret: sanitizedManualSecret,
+                period: manualPeriod,
+                algorithm: manualAlgorithm,
+                digits: manualDigits,
             };
             secretToValidate = sanitizedManualSecret;
         }
@@ -285,7 +318,74 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                         </div>
                     )}
 
+                    {/* Advanced Options Section */}
                     {!isEditMode && (
+                        <div className="border rounded-md p-2 bg-gray-50 dark:bg-gray-800">
+                            <button
+                                type="button"
+                                onClick={() => setShowAdvanced(!showAdvanced)}
+                                className="flex items-center justify-between w-full text-left text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none"
+                            >
+                                <span>{t('modals.advanced_options')}</span>
+                                {showAdvanced ? <FiChevronDown /> : <FiChevronRight />}
+                            </button>
+                            
+                            {showAdvanced && (
+                                <div className="mt-3 space-y-3 pl-1">
+                                    <div>
+                                        <label htmlFor="period" className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            {t('modals.period_label')}
+                                        </label>
+                                        <input
+                                            id="period"
+                                            type="number"
+                                            value={currentPeriod}
+                                            onChange={(e) => setManualPeriod(parseInt(e.target.value) || 30)}
+                                            className="mt-1 form-input text-sm py-1"
+                                            min="1"
+                                            disabled={isUriActive}
+                                        />
+                                        <p className="text-xs text-gray-400 mt-1">{t('modals.period_help')}</p>
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="algorithm" className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            {t('modals.algorithm_label')}
+                                        </label>
+                                        <select
+                                            id="algorithm"
+                                            value={currentAlgorithm}
+                                            onChange={(e) => setManualAlgorithm(e.target.value)}
+                                            className="mt-1 form-input text-sm py-1"
+                                            disabled={isUriActive}
+                                        >
+                                            <option value="SHA1">SHA1</option>
+                                            <option value="SHA256">SHA256</option>
+                                            <option value="SHA512">SHA512</option>
+                                        </select>
+                                        <p className="text-xs text-gray-400 mt-1">{t('modals.algorithm_help')}</p>
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="digits" className="block text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            {t('modals.digits_label')}
+                                        </label>
+                                        <input
+                                            id="digits"
+                                            type="number"
+                                            value={currentDigits}
+                                            onChange={(e) => setManualDigits(parseInt(e.target.value) || 6)}
+                                            className="mt-1 form-input text-sm py-1"
+                                            min="6"
+                                            max="8"
+                                            disabled={isUriActive}
+                                        />
+                                        <p className="text-xs text-gray-400 mt-1">{t('modals.digits_help')}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}                    {!isEditMode && (
                         <>
                             <div className="relative flex items-center my-4">
                                 <div className="flex-grow divider-line"></div>

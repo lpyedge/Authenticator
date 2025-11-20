@@ -159,12 +159,15 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
         // attach temporary ids to incoming so we can store them as full Account objects
         const mappedIncoming: Account[] = incoming.map((acc, i) => ({ ...acc, id: `${idsBase}-${i}` } as Account));
 
-        // key by normalized issuer + accountName + secret
-        const makeKey = (a: { issuer?: string; accountName?: string; secret?: string }) => {
+        // key by normalized issuer + accountName + secret + period + algorithm + digits
+        const makeKey = (a: { issuer?: string; accountName?: string; secret?: string; period?: number; algorithm?: string; digits?: number }) => {
             const issuer = (a.issuer || '').trim().toLowerCase();
             const name = (a.accountName || '').trim().toLowerCase();
             const secret = (a.secret || '').trim();
-            return `${issuer}||${name}||${secret}`;
+            const period = a.period || 30;
+            const algorithm = (a.algorithm || 'SHA1').toUpperCase();
+            const digits = a.digits || 6;
+            return `${issuer}||${name}||${secret}||${period}||${algorithm}||${digits}`;
         };
 
         if (mode === 'merge') {
@@ -194,7 +197,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
             const ordered = result.map((a, idx) => ({ ...a, order: idx }));
             updateAccounts(ordered);
             // compute summary
-            const added = mappedIncoming.filter(acc => !accounts.some(a => ((a.issuer || '').trim().toLowerCase() === (acc.issuer || '').trim().toLowerCase()) && ((a.accountName || '').trim().toLowerCase() === (acc.accountName || '').trim().toLowerCase()) && ((a.secret || '').trim() === (acc.secret || '').trim()))).length;
+            const added = mappedIncoming.filter(acc => !accounts.some(a => makeKey(a) === makeKey(acc))).length;
             const uniqueCount = result.length - accounts.length;
             const skipped = mappedIncoming.length - uniqueCount;
             if (cb) cb({ added: uniqueCount, skipped });
@@ -263,7 +266,17 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
                 if ((account.group || '') !== newGroup) {
                     const updatedAccounts = accounts.map(acc => {
                         if (acc.id === accountId) {
-                            return { ...acc, group: newGroup || undefined };
+                            // When moving to a new group, append to the end of that group's order
+                            const targetGroupAccounts = accounts.filter(a => (a.group || '') === newGroup);
+                            const maxGroupOrder = targetGroupAccounts.length > 0 
+                                ? Math.max(...targetGroupAccounts.map(a => a.groupOrder || 0)) 
+                                : -1;
+                            
+                            return { 
+                                ...acc, 
+                                group: newGroup || undefined,
+                                groupOrder: maxGroupOrder + 1
+                            };
                         }
                         return acc;
                     });

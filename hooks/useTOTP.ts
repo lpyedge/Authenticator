@@ -3,11 +3,9 @@ import { useI18n } from './useI18n';
 import { TOTP } from '../libs/otpauth';
 import { useTotpTicker } from './useTotpTicker';
 
-const DEFAULT_PERIOD = 30;
-
-export const useTOTP = (secret: string) => {
+export const useTOTP = (secret: string, period: number = 30, algorithm: string = 'SHA1', digits: number = 6) => {
     const { t } = useI18n();
-    const { timeLeft, slot } = useTotpTicker(DEFAULT_PERIOD);
+    const { timeLeft, slot } = useTotpTicker(period);
     const [token, setToken] = useState('...');
 
     const totp = useMemo(() => {
@@ -15,16 +13,16 @@ export const useTOTP = (secret: string) => {
             return new TOTP({
                 issuer: 'ACME',
                 label: 'Default',
-                algorithm: 'SHA1',
-                digits: 6,
-                period: DEFAULT_PERIOD,
+                algorithm: algorithm,
+                digits: digits,
+                period: period,
                 secret,
             });
         } catch (error) {
             console.error('Invalid secret key:', error);
             return null;
         }
-    }, [secret]);
+    }, [secret, period, algorithm, digits]);
 
     useEffect(() => {
         if (!totp) {
@@ -34,5 +32,13 @@ export const useTOTP = (secret: string) => {
         setToken(totp.generate());
     }, [totp, slot, t]);
 
-    return { token, timeLeft: totp ? timeLeft : 0 };
+    const isTokenValid = !!totp;
+    const progress = (timeLeft / period) * 100;
+
+    return { 
+        token, 
+        remainingTime: timeLeft, 
+        progress, 
+        isTokenValid 
+    };
 };

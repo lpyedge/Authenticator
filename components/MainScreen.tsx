@@ -7,10 +7,26 @@ import { FiPlus, FiLock, FiSettings, FiCheck, FiTrash2 } from 'react-icons/fi';
 import { useI18n } from '../hooks/useI18n';
 import LanguageSwitcher from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
-import { SortableProvider } from './sortable/SortableProvider';
-import { SortableDropTarget, useSortableContext } from './sortable/SortableContext';
 import GroupTabs from './GroupTabs';
 import AddGroupModal from './modals/AddGroupModal';
+import { 
+    DndContext, 
+    DragOverlay, 
+    useSensor, 
+    useSensors, 
+    PointerSensor, 
+    KeyboardSensor, 
+    closestCenter, 
+    DragEndEvent,
+    DragStartEvent,
+    useDroppable,
+    DragOverEvent
+} from '@dnd-kit/core';
+import { 
+    arrayMove, 
+    sortableKeyboardCoordinates 
+} from '@dnd-kit/sortable';
+import AccountItem from './AccountItem';
 
 const AddEditAccountModal = lazy(() => import('./modals/AddEditAccountModal'));
 const SettingsModal = lazy(() => import('./modals/SettingsModal'));
@@ -25,15 +41,15 @@ interface MainScreenProps {
     onChangeMasterPassword: (newPassword: string) => Promise<void>;
 }
 
-const DeleteDropZone: React.FC<{ title: string; subtitle: string }> = ({ title, subtitle }) => {
-    const { dragTarget, draggedId } = useSortableContext();
-    const isActive = dragTarget?.type === 'delete';
-    const isEnabled = Boolean(draggedId);
+const DeleteDropZone: React.FC<{ title: string; subtitle: string; active: boolean }> = ({ title, subtitle, active }) => {
+    const { setNodeRef, isOver } = useDroppable({
+        id: 'delete-zone',
+    });
 
     return (
         <div
-            className={`reorder-delete-zone ${isActive ? 'active' : ''} ${isEnabled ? 'enabled' : ''}`}
-            data-sortable-target="delete"
+            ref={setNodeRef}
+            className={`reorder-delete-zone ${isOver ? 'active' : ''} ${active ? 'enabled' : ''}`}
             role="button"
             aria-label={`${title}. ${subtitle}`}
         >
@@ -56,6 +72,33 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
     const [pendingDelete, setPendingDelete] = useState<Account | null>(null);
     const [activeGroup, setActiveGroup] = useState<string>('');
     const [isAddGroupOpen, setIsAddGroupOpen] = useState(false);
+    const [activeId, setActiveId] = useState<string | null>(null);
+
+    const openAddModal = () => {
+        setEditingAccount(null);
+        setAddEditModalOpen(true);
+    };
+
+    const openEditModal = (account: Account) => {
+        setEditingAccount(account);
+        setAddEditModalOpen(true);
+    };
+
+    const closeAddEditModal = () => {
+        setAddEditModalOpen(false);
+        setEditingAccount(null);
+    };
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
     const allGroups = useMemo(() => {
         const set = new Set<string>(groups);
@@ -66,6 +109,15 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
         });
         return Array.from(set);
     }, [groups, accounts]);
+
+    const filteredAccounts = useMemo(() => {
+        let result = accounts;
+        if (activeGroup) {
+            result = result.filter(acc => acc.group === activeGroup);
+            return result.sort((a, b) => (a.groupOrder ?? 0) - (b.groupOrder ?? 0));
+        }
+        return result.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }, [accounts, activeGroup]);
 
     useEffect(() => {
         if (activeGroup && !allGroups.includes(activeGroup)) {
@@ -90,6 +142,17 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
     const handleRequestDelete = useCallback((account: Account) => {
         setPendingDelete(account);
     }, []);
+
+    const cancelDropDelete = () => {
+        setPendingDelete(null);
+    };
+
+    const confirmDropDelete = () => {
+        if (pendingDelete) {
+            handleDeleteAccount(pendingDelete.id);
+            setPendingDelete(null);
+        }
+    };
 
     const handleImportAccounts = useCallback((incoming: Omit<Account, 'id'>[], mode: 'merge' | 'overwrite', cb?: (summary: { added: number; skipped: number }) => void) => {
         const idsBase = Date.now().toString();
@@ -148,7 +211,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
             });
             const ordered = deduped.map((a, idx) => ({ ...a, order: idx }));
             updateAccounts(ordered);
-            // overwrite: added = deduped length, skipped = incoming.length - deduped.length
+            // overwrite: added = deduped length, skipped = incoming.length - deduped length
             const added = deduped.length;
             const skipped = mappedIncoming.length - deduped.length;
             if (cb) cb({ added, skipped });
@@ -164,235 +227,86 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
         setReorderMode(true);
     }, []);
 
-    const handleReorderCommit = useCallback((draggedId: string, target: SortableDropTarget) => {
-        if (!draggedId) return;
+    const handleDragStart = (event: DragStartEvent) => {
+        setActiveId(event.active.id as string);
+    };
 
-        // Handle Group Reordering
-        if (draggedId.startsWith('group-tab:')) {
-            const draggedGroup = draggedId.slice('group-tab:'.length);
-            
-            const newGroups = [...allGroups];
-            // Remove 'All' tab placeholder if present (usually empty string)
-            // But wait, 'allGroups' might contain empty string if it's in 'groups' or accounts have empty group.
-            // We only want to reorder named groups.
-            // If draggedGroup is empty string (All tab), we shouldn't be able to drag it (disabled in GroupTabs).
-            
-            const fromIndex = newGroups.indexOf(draggedGroup);
-            if (fromIndex === -1) return;
-            
-            newGroups.splice(fromIndex, 1);
-            
-            let targetGroup = '';
-            if (target.type === 'reorder-group-before' || target.type === 'reorder-group-after') {
-                targetGroup = target.groupId;
-            } else {
-                return;
-            }
-            
-            let toIndex = newGroups.indexOf(targetGroup);
-            if (toIndex === -1) return;
-            
-            if (target.type === 'reorder-group-after') {
-                toIndex += 1;
-            }
-            
-            newGroups.splice(toIndex, 0, draggedGroup);
-            
-            updateGroups(newGroups.filter(g => g));
+    const handleDragOver = (event: DragOverEvent) => {
+        // Optional: Add visual feedback logic here if needed
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        setActiveId(null);
+
+        if (!over) return;
+
+        if (over.id === 'delete-zone') {
+            const account = accounts.find(a => a.id === active.id);
+            if (account) setPendingDelete(account);
             return;
         }
 
-        const originalAccount = accounts.find(acc => acc.id === draggedId);
-        if (!originalAccount) return;
+        if (over.id.toString().startsWith('group-tab:')) {
+            const targetGroup = over.id.toString().replace('group-tab:', '');
+            const accountId = active.id as string;
+            const account = accounts.find(a => a.id === accountId);
+            
+            if (account) {
+                const newGroup = targetGroup === '__all__' ? '' : targetGroup;
+                
+                if (newGroup === '__create__') {
+                    setIsAddGroupOpen(true);
+                    return;
+                }
 
-        if (target.type === 'delete') {
-            setPendingDelete(originalAccount);
-            return;
-        }
-
-        const updated = accounts.map(acc => ({ ...acc }));
-        const byId = new Map<string, Account>(
-            updated.map((acc): [string, Account] => [acc.id, acc])
-        );
-        const dragged = byId.get(draggedId);
-        if (!dragged) return;
-
-        const normalizeGroup = (groupId: string | undefined) => {
-            const key = groupId ?? '';
-            const members = updated
-                .filter(acc => (acc.group ?? '') === key)
-                .sort((a, b) => {
-                    const aOrder = a.groupOrder ?? a.order ?? 0;
-                    const bOrder = b.groupOrder ?? b.order ?? 0;
-                    return aOrder - bOrder;
-                });
-            members.forEach((acc, idx) => {
-                acc.groupOrder = idx;
-            });
-        };
-
-        if (target.type === 'group-tab') {
-            if (target.groupId === '__create__') {
-                setIsAddGroupOpen(true);
-                return;
-            }
-            const newGroupKey = target.groupId === '__all__' ? '' : target.groupId;
-            const originalGroupKey = dragged.group ?? '';
-            if (newGroupKey !== originalGroupKey) {
-                const sourceRect = document.querySelector<HTMLElement>(`[data-sortable-id="${draggedId}"]`);
-                const targetTab = document.querySelector<HTMLElement>(`[data-group-tab="${target.groupId}"]`);
-                if (sourceRect && targetTab) {
-                    const clone = sourceRect.cloneNode(true) as HTMLElement;
-                    clone.classList.add('group-drop-clone');
-                    const card = sourceRect.querySelector<HTMLElement>('.group-drop-source');
-                    card?.classList.add('group-drop-source-hidden');
-                    const sourceBounds = sourceRect.getBoundingClientRect();
-                    const targetBounds = targetTab.getBoundingClientRect();
-                    clone.style.position = 'fixed';
-                    clone.style.top = `${sourceBounds.top}px`;
-                    clone.style.left = `${sourceBounds.left}px`;
-                    clone.style.width = `${sourceBounds.width}px`;
-                    clone.style.height = `${sourceBounds.height}px`;
-                    clone.style.pointerEvents = 'none';
-                    clone.style.transform = 'translate(0px, 0px) scale(1)';
-                    clone.style.transition = 'transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.35s ease-out';
-                    document.body.appendChild(clone);
-
-                    requestAnimationFrame(() => {
-                        const translateX = targetBounds.left + targetBounds.width / 2 - (sourceBounds.left + sourceBounds.width / 2);
-                        const translateY = targetBounds.top + targetBounds.height / 2 - (sourceBounds.top + sourceBounds.height / 2);
-                        clone.style.transform = `translate(${translateX}px, ${translateY - 8}px) scale(0.45)`;
-                        clone.style.opacity = '0';
+                if ((account.group || '') !== newGroup) {
+                    const updatedAccounts = accounts.map(acc => {
+                        if (acc.id === accountId) {
+                            return { ...acc, group: newGroup || undefined };
+                        }
+                        return acc;
                     });
-
-                    clone.addEventListener('transitionend', () => {
-                        clone.remove();
-                        card?.classList.remove('group-drop-source-hidden');
-                        targetTab.classList.add('group-tab-pulse');
-                        setTimeout(() => {
-                            targetTab.classList.remove('group-tab-pulse');
-                        }, 420);
-                    }, { once: true });
+                    updateAccounts(updatedAccounts);
                 }
-
-                const existingCount = updated.filter(acc => (acc.group ?? '') === newGroupKey && acc.id !== draggedId).length;
-                dragged.group = newGroupKey || undefined;
-                dragged.groupOrder = existingCount;
-                normalizeGroup(originalGroupKey);
-                normalizeGroup(dragged.group);
-                updateAccounts(updated);
             }
             return;
         }
 
-        // Global reorder when viewing "All"
-        if (!activeGroup) {
-            const orderIds = updated.map(acc => acc.id);
-            const fromIndex = orderIds.indexOf(draggedId);
-            if (fromIndex === -1) return;
-            orderIds.splice(fromIndex, 1);
+        if (active.id !== over.id) {
+            const oldIndex = filteredAccounts.findIndex(a => a.id === active.id);
+            const newIndex = filteredAccounts.findIndex(a => a.id === over.id);
 
-            if (target.type === 'end') {
-                orderIds.push(draggedId);
-            } else {
-                const targetIndex = orderIds.indexOf(target.id);
-                if (targetIndex === -1) return;
-                const insertIndex = target.type === 'after' ? targetIndex + 1 : targetIndex;
-                orderIds.splice(insertIndex, 0, draggedId);
+            if (oldIndex !== -1 && newIndex !== -1) {
+                const newFiltered: Account[] = arrayMove(filteredAccounts, oldIndex, newIndex);
+                
+                const updatedAccounts = [...accounts];
+                
+                newFiltered.forEach((acc, index) => {
+                    const original = updatedAccounts.find(a => a.id === acc.id);
+                    if (original) {
+                        if (activeGroup) {
+                            original.groupOrder = index;
+                        } else {
+                            original.order = index;
+                        }
+                    }
+                });
+                
+                updateAccounts(updatedAccounts);
             }
-
-            orderIds.forEach((id, idx) => {
-                const account = byId.get(id);
-                if (account) {
-                    account.order = idx;
-                }
-            });
-            normalizeGroup(dragged.group);
-            updateAccounts(updated);
-            return;
         }
-
-        // Group-specific reorder
-        const groupKey = activeGroup;
-        if ((dragged.group ?? '') !== groupKey) {
-            dragged.group = groupKey || undefined;
-        }
-        const groupMembers = accounts
-            .filter(acc => (acc.group ?? '') === groupKey)
-            .map(acc => byId.get(acc.id)!)
-            .filter(Boolean)
-            .sort((a, b) => {
-                const aOrder = a.groupOrder ?? a.order ?? 0;
-                const bOrder = b.groupOrder ?? b.order ?? 0;
-                return aOrder - bOrder;
-            });
-
-        const fromIndex = groupMembers.findIndex(acc => acc.id === draggedId);
-        if (fromIndex === -1) return;
-        const [extracted] = groupMembers.splice(fromIndex, 1);
-
-        let insertIndex: number;
-        if (target.type === 'end') {
-            insertIndex = groupMembers.length;
-        } else {
-            const targetIndex = groupMembers.findIndex(acc => acc.id === target.id);
-            if (targetIndex === -1) return;
-            insertIndex = target.type === 'after' ? targetIndex + 1 : targetIndex;
-        }
-
-        groupMembers.splice(insertIndex, 0, extracted);
-        groupMembers.forEach((acc, idx) => {
-            acc.groupOrder = idx;
-        });
-        normalizeGroup(groupKey);
-        updateAccounts(updated);
-    }, [accounts, activeGroup, updateAccounts]);
-    
-    const openEditModal = (account: Account) => {
-        setEditingAccount(account);
-        setAddEditModalOpen(true);
     };
-    
-    const openAddModal = () => {
-        setEditingAccount(null);
-        setAddEditModalOpen(true);
-    };
-
-    const closeAddEditModal = () => {
-        setAddEditModalOpen(false);
-        setEditingAccount(null);
-    };
-
-    const confirmDropDelete = useCallback(() => {
-        if (!pendingDelete) return;
-        handleDeleteAccount(pendingDelete.id);
-        setPendingDelete(null);
-    }, [handleDeleteAccount, pendingDelete]);
-
-    const cancelDropDelete = useCallback(() => {
-        setPendingDelete(null);
-    }, []);
-
-    const filteredAccounts = useMemo(() => {
-        if (!activeGroup) {
-            return [...accounts].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        }
-        return accounts
-            .filter(acc => (acc.group ?? '') === activeGroup)
-            .sort((a, b) => {
-                const aOrder = a.groupOrder ?? a.order ?? 0;
-                const bOrder = b.groupOrder ?? b.order ?? 0;
-                return aOrder - bOrder;
-            });
-    }, [accounts, activeGroup]);
     
     return (
         <div className="min-h-screen app-shell font-sans flex flex-col transition-colors duration-200">
             <ToastProvider>
-                <SortableProvider
-                    reorderMode={reorderMode}
-                    onRequestReorderMode={handleRequestReorderMode}
-                    onCommit={handleReorderCommit}
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver}
                 >
                     <div className="container mx-auto max-w-2xl p-4 flex-grow relative">
                         <header className="flex justify-between items-center py-4">
@@ -459,6 +373,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
                                     onEdit={openEditModal}
                                     onRequestDelete={handleRequestDelete}
                                     reorderMode={reorderMode}
+                                    onRequestReorderMode={handleRequestReorderMode}
                                 />
                             </div>
                         </main>
@@ -514,7 +429,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
                             setIsAddGroupOpen(false);
                         }}
                     />
-                </SortableProvider>
+                </DndContext>
             </ToastProvider>
         </div>
     );

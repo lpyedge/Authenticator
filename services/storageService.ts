@@ -1,6 +1,7 @@
 
 import { Account } from '../types';
 import { cryptoService } from './cryptoService';
+import { webCryptoService } from './webCryptoService';
 
 const STORAGE_KEY = 'secure-authenticator-data';
 
@@ -19,7 +20,22 @@ class StorageService {
         if (!encryptedData) {
             return { accounts: [], groups: [] };
         }
-        const decryptedData = cryptoService.decrypt(encryptedData, password);
+
+        let decryptedData: string;
+
+        try {
+            // Try new WebCrypto first
+            decryptedData = await webCryptoService.decrypt(encryptedData, password);
+        } catch (e) {
+            // Fallback to legacy CryptoJS
+            try {
+                decryptedData = cryptoService.decrypt(encryptedData, password);
+            } catch (legacyError) {
+                // console.error('Decryption failed with both methods', e, legacyError);
+                throw new Error('Decryption failed');
+            }
+        }
+
         try {
             const parsed = JSON.parse(decryptedData);
             if (Array.isArray(parsed)) {
@@ -39,7 +55,8 @@ class StorageService {
     async encryptAndSave(accounts: Account[], groups: string[], password: string): Promise<void> {
         const payload: PersistedPayload = { accounts, groups };
         const dataToEncrypt = JSON.stringify(payload);
-        const encryptedData = cryptoService.encrypt(dataToEncrypt, password);
+        // Always use new WebCrypto for saving
+        const encryptedData = await webCryptoService.encrypt(dataToEncrypt, password);
         localStorage.setItem(STORAGE_KEY, encryptedData);
     }
 

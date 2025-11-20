@@ -2,17 +2,17 @@ import React from 'react';
 import { Account } from '../types';
 import AccountItem from './AccountItem';
 import { useI18n } from '../hooks/useI18n';
-import { SortableContainer } from './sortable/SortableContainer';
-import { SortableItem } from './sortable/SortableItem';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 interface AccountListProps {
     accounts: Account[];
     onEdit: (account: Account) => void;
     onRequestDelete: (account: Account) => void;
     reorderMode?: boolean;
+    onRequestReorderMode?: () => void;
 }
 
-const AccountList: React.FC<AccountListProps> = ({ accounts, onEdit, onRequestDelete, reorderMode = false }) => {
+const AccountList: React.FC<AccountListProps> = ({ accounts, onEdit, onRequestDelete, reorderMode = false, onRequestReorderMode }) => {
     const { t } = useI18n();
 
     if (accounts.length === 0) {
@@ -25,18 +25,20 @@ const AccountList: React.FC<AccountListProps> = ({ accounts, onEdit, onRequestDe
     }
 
     return (
-        <SortableContainer id="account-list-container" className="space-y-0">
-            {accounts.map(account => (
-                <SortableItem key={account.id} id={account.id}>
+        <SortableContext items={accounts.map(a => a.id)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+                {accounts.map(account => (
                     <AccountItem
+                        key={account.id}
                         account={account}
                         onEdit={onEdit}
                         onRequestDelete={onRequestDelete}
                         reorderMode={reorderMode}
+                        onRequestReorderMode={onRequestReorderMode}
                     />
-                </SortableItem>
-            ))}
-        </SortableContainer>
+                ))}
+            </div>
+        </SortableContext>
     );
 };
 

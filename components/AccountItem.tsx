@@ -3,7 +3,7 @@ import { Account } from '../types';
 import { useTOTP } from '../hooks/useTOTP';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { useI18n } from '../hooks/useI18n';
-import { useSortableContext } from './sortable/SortableProvider';
+import { useSortableContext } from './sortable/SortableContext';
 
 const ACTIONS_WIDTH = 144; // 2 buttons * 72px width
 const SWIPE_THRESHOLD = 60; // minimum swipe distance to trigger action
@@ -486,7 +486,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
     return (
         <div
             ref={itemRef}
-            className={`relative bg-secondary-bg rounded-lg overflow-hidden w-full select-none group-drop-source ${reorderMode ? 'jiggle' : ''} ${isDragging ? 'dragging' : ''}`}
+            className={`relative account-card overflow-hidden w-full select-none group-drop-source border-0 ${reorderMode ? 'jiggle' : ''} ${isDragging ? 'dragging' : ''}`}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -497,7 +497,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
             <div ref={actionsRef} className="absolute top-0 right-0 h-full flex items-center z-0 swipe-actions">
                 <button
                     onClick={handleEditClick}
-                    className="h-full w-[72px] flex items-center justify-center transition-colors button-accent"
+                    className="h-full w-[72px] flex items-center justify-center transition-colors btn-primary rounded-none"
                     aria-label={t('modals.edit_account_title')}
                     data-action-button
                 >
@@ -508,7 +508,7 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
                         onRequestDelete(account);
                         closeActions();
                     }}
-                    className="h-full w-[72px] flex items-center justify-center transition-colors button-error"
+                    className="h-full w-[72px] flex items-center justify-center transition-colors btn-danger rounded-none"
                     aria-label={t('account_item.confirm_delete_tooltip')}
                     data-action-button
                 >
@@ -517,12 +517,12 @@ const AccountItem: React.FC<AccountItemProps> = ({ account, onEdit, onRequestDel
             </div>
             <div
                 ref={contentRef}
-                className="relative w-full px-4 py-4 z-10 bg-secondary-bg"
+                className="relative w-full p-0 z-10 bg-[rgb(var(--bg-secondary))]"
             >
-                <div className="account-card-content">
+                <div className="account-card-content px-3 py-2">
                     <div className="flex items-start gap-3">
-                        <p className="text-base font-semibold truncate flex-1 min-w-0 text-primary-color">{account.issuer}</p>
-                        <p className="text-sm font-medium truncate text-right text-secondary-color opacity-80 ml-auto max-w-[60%] min-w-0">{account.accountName}</p>
+                        <p className="text-subtitle truncate flex-1 min-w-0">{account.issuer}</p>
+                        <p className="text-caption truncate text-right opacity-80 ml-auto max-w-[60%] min-w-0">{account.accountName}</p>
                     </div>
                     <div className="relative mt-2">
                         <div

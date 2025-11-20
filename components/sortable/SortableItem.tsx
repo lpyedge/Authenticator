@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useSortableContext } from './SortableProvider';
+import { useSortableContext } from './SortableContext';
 
 interface SortableItemProps {
     id: string;

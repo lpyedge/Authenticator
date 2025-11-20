@@ -175,6 +175,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             resetImportFlow();
             setImportError('errors.import_invalid_json');
             return;
+        } else if (file.name.endsWith('.enc')) {
+            setImportStage('password');
+            return;
         } else if (file.name.startsWith('otpauth-migration')) {
             // Handle Google Authenticator migration file
             setImportStage('password');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSortableContext, END_SORTABLE_TARGET } from './SortableProvider';
+import { useSortableContext, END_SORTABLE_TARGET } from './SortableContext';
 
 interface SortableContainerProps {
     id?: string;

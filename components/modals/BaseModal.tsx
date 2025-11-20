@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { FiX } from 'react-icons/fi';
 
 interface BaseModalProps {
     isOpen: boolean;
@@ -48,25 +49,23 @@ const BaseModal: React.FC<BaseModalProps> = ({ isOpen, onClose, title, children 
 
     return (
         <div 
-            className="fixed inset-0 flex justify-center items-center z-50 transition-opacity"
+            className="modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
         >
             <div 
-                className="rounded-xl shadow-lg w-full max-w-md m-4 p-6 transform transition-all"
-                style={{ backgroundColor: 'rgb(var(--bg-secondary))' }}
+                className="modal-content transform transition-all"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-4">
-                    <h2 id="modal-title" className="text-xl font-bold" style={{ color: 'rgb(var(--text-primary))' }}>{title}</h2>
+                    <h2 id="modal-title" className="text-subtitle">{title}</h2>
                     <button 
                         onClick={onClose} 
-                        className="text-3xl leading-none hover:opacity-80 transition-opacity" 
-                        style={{ color: 'rgb(var(--text-secondary))' }}
+                        className="modal-close-btn" 
                         aria-label="Close modal"
                     >
-                        &times;
+                        <FiX />
                     </button>
                 </div>
                 <div>{children}</div>

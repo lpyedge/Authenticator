@@ -8,7 +8,7 @@ const LanguageSwitcher: React.FC = () => {
         <select
             value={locale}
             onChange={(e) => setLocale(e.target.value)}
-            className="themed-select"
+            className="themed-select auto-width"
             aria-label="Language selector"
         >
             <option value="en">English</option>

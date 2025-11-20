@@ -1,13 +1,8 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { SortableContext, SortableContextValue, SortableDropTarget, END_SORTABLE_TARGET } from './SortableContext';
 
-export type SortableDropTarget =
-    | { type: 'before'; id: string }
-    | { type: 'after'; id: string }
-    | { type: 'end' }
-    | { type: 'delete' }
-    | { type: 'group-tab'; groupId: string }
-    | { type: 'reorder-group-before'; groupId: string }
-    | { type: 'reorder-group-after'; groupId: string };
+export { useSortableContext, END_SORTABLE_TARGET } from './SortableContext';
+export type { SortableDropTarget } from './SortableContext';
 
 interface SortableProviderProps {
     reorderMode: boolean;
@@ -16,26 +11,10 @@ interface SortableProviderProps {
     children: React.ReactNode;
 }
 
-interface SortableContextValue {
-    reorderMode: boolean;
-    draggedId: string | null;
-    dragTarget: SortableDropTarget | null;
-    startDragSession: (id: string) => void;
-    updateDragTarget: (value: string | null) => void;
-    completeDragSession: (draggedId: string, targetValue: string | null) => void;
-    cancelDragSession: () => void;
-    getPlaceholderState: (id: string) => { before: boolean; after: boolean };
-    shouldShowEndPlaceholder: boolean;
-}
-
-const SortableContext = createContext<SortableContextValue | null>(null);
-
-const END_TARGET_TOKEN = '__sortable_end__';
-
 const parseDropTarget = (value: string | null): SortableDropTarget | null => {
     if (!value) return null;
     if (value === '__top__') return { type: 'before', id: '' };
-    if (value === '__bottom__' || value === 'end' || value === END_TARGET_TOKEN) {
+    if (value === '__bottom__' || value === 'end' || value === END_SORTABLE_TARGET) {
         return { type: 'end' };
     }
     if (value === 'delete') {
@@ -126,13 +105,3 @@ export const SortableProvider: React.FC<SortableProviderProps> = ({ reorderMode,
         </SortableContext.Provider>
     );
 };
-
-export const useSortableContext = (): SortableContextValue => {
-    const ctx = useContext(SortableContext);
-    if (!ctx) {
-        throw new Error('useSortableContext must be used within a SortableProvider');
-    }
-    return ctx;
-};
-
-export const END_SORTABLE_TARGET = END_TARGET_TOKEN;

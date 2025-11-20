@@ -7,7 +7,8 @@ import { FiPlus, FiLock, FiSettings, FiCheck, FiTrash2 } from 'react-icons/fi';
 import { useI18n } from '../hooks/useI18n';
 import LanguageSwitcher from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
-import { SortableProvider, SortableDropTarget, useSortableContext } from './sortable/SortableProvider';
+import { SortableProvider } from './sortable/SortableProvider';
+import { SortableDropTarget, useSortableContext } from './sortable/SortableContext';
 import GroupTabs from './GroupTabs';
 import AddGroupModal from './modals/AddGroupModal';
 
@@ -395,7 +396,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ accounts, groups, updateAccount
                 >
                     <div className="container mx-auto max-w-2xl p-4 flex-grow relative">
                         <header className="flex justify-between items-center py-4">
-                            <h1 className="text-2xl font-bold">{t('main.header')}</h1>
+                            <h1 className="text-title">{t('main.header')}</h1>
                             <div className="flex items-center gap-3">
                                 {!reorderMode ? (
                                     <>

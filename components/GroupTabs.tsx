@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import { FiPlus } from 'react-icons/fi';
-import { useSortableContext } from './sortable/SortableProvider';
+import { useSortableContext } from './sortable/SortableContext';
 import { Account } from '../types';
 
 interface GroupTabsProps {
@@ -205,7 +205,7 @@ const GroupTabs: React.FC<GroupTabsProps> = ({ groups, activeGroup, onSelectGrou
                     type="button"
                 >
                     <span className="truncate">{label}</span>
-                    {count > 0 && <span className="group-tab-badge">{count}</span>}
+                    {count > 0 && <span className="group-tab-badge">{count > 99 ? '99' : count}</span>}
                 </button>
                 {isGroupReorderTargetAfter && <div className="group-reorder-indicator-after" />}
             </div>

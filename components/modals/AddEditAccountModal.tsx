@@ -252,19 +252,19 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                             type="text"
                             value={currentIssuer}
                             onChange={(e) => setManualIssuer(e.target.value)}
-                            className="mt-1 w-full themed-input px-4 py-2"
+                            className="mt-1 form-input"
                             placeholder={t('modals.issuer_placeholder')}
                             disabled={isUriActive}
                         />
                     </div>
                     <div>
-                        <label htmlFor="accountName" className="block text-sm font-medium text-muted">{t('modals.account_name_label')}</label>
+                        <label htmlFor="accountName" className="form-label">{t('modals.account_name_label')}</label>
                         <input
                             id="accountName"
                             type="text"
                             value={currentAccountName}
                             onChange={(e) => setManualAccountName(e.target.value)}
-                            className="mt-1 w-full themed-input px-4 py-2"
+                            className="mt-1 form-input"
                             placeholder={t('modals.account_name_placeholder')}
                             disabled={isUriActive}
                         />
@@ -272,13 +272,13 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
                     
                     {!isEditMode && (
                         <div>
-                            <label htmlFor="secret" className="block text-sm font-medium text-muted">{t('modals.secret_key_label')}</label>
+                            <label htmlFor="secret" className="form-label">{t('modals.secret_key_label')}</label>
                             <input
                                 id="secret"
                                 type="text"
                                 value={currentSecret}
                                 onChange={(e) => setManualSecret(e.target.value)}
-                                className="mt-1 w-full themed-input px-4 py-2"
+                                className="mt-1 form-input"
                                 placeholder={t('modals.secret_key_placeholder')}
                                 disabled={isUriActive}
                             />
@@ -287,32 +287,32 @@ const AddEditAccountModal: React.FC<AddEditAccountModalProps> = ({ isOpen, onClo
 
                     {!isEditMode && (
                         <>
-                            <div className="relative flex items-center">
+                            <div className="relative flex items-center my-4">
                                 <div className="flex-grow divider-line"></div>
-                                <span className="flex-shrink mx-4 text-sm text-muted">{t('modals.or_divider')}</span>
+                                <span className="flex-shrink mx-4 text-caption">{t('modals.or_divider')}</span>
                                 <div className="flex-grow divider-line"></div>
                             </div>
-                            <div>
+                            <div className="mb-4">
                                 <textarea
                                     value={uriInput}
                                     onChange={(e) => setUriInput(e.target.value)}
-                                    className="mt-1 w-full themed-input px-4 py-2 text-sm"
+                                    className="mt-1 form-input text-sm"
                                     placeholder={t('modals.uri_placeholder')}
                                     rows={2}
                                 />
                             </div>
-                            <button type="button" onClick={() => setScanModalOpen(true)} className="w-full px-4 py-2 rounded-lg themed-btn themed-btn-secondary">
+                            <button type="button" onClick={() => setScanModalOpen(true)} className="w-full btn btn-secondary">
                                 {t('modals.scan_qr_button')}
                             </button>
                         </>
                     )}
 
-                    {(formError || uriError) && <p className="text-red-400 text-sm">{formError || uriError}</p>}
-                    <div className="flex justify-end space-x-3 pt-2">
-                        <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg themed-btn themed-btn-secondary">
+                    {(formError || uriError) && <p className="text-red-500 text-sm mt-2">{formError || uriError}</p>}
+                    <div className="flex justify-end space-x-3 pt-4">
+                        <button type="button" onClick={onClose} className="btn btn-secondary">
                             {t('modals.cancel_button')}
                         </button>
-                        <button type="submit" disabled={isSaveDisabled} className="px-4 py-2 rounded-lg themed-btn themed-btn-primary">
+                        <button type="submit" disabled={isSaveDisabled} className="btn btn-primary">
                             {t('modals.save_button')}
                         </button>
                     </div>
